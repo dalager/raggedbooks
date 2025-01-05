@@ -2,7 +2,13 @@
 
 This is a small POC project used for searching a local book collection with semantic search.
 
-Note that I have bought these books and the content is not removed from my computer. The embeddings are generated and stored locally on the same computer and not shared or exposed to the internet.
+It demonstrates
+
+1. Extracting text from PDF files and creating a Vector store with embeddings
+2. Searching the vector store with a query and returning the most relevant results
+3. Using the RAG (Retrieval Augmented Generation) technique to provide groundings for the question to given to a LLM.
+
+(**Note**: I have bought these books and the content is not removed from my computer. The embeddings are generated and stored locally on the same computer and not shared or exposed to the internet.)
 
 ## Requirements
 
@@ -11,6 +17,9 @@ Note that I have bought these books and the content is not removed from my compu
 
 - A running Ollama (<https://ollama.com/>) installation with a pulled `nomic-embed-txt` embedding model. You should be able to open <http://localhost:11434/api/tags> in your browser and see a list of models with the `nomic-embed-txt` model in it.
 - A running QDrant Vector store (<https://github.com/qdrant/qdrant>) in docker exposing default ports, (6333,6334). You should be able to open <http://localhost:6333> in your browser.
+- For the RAG part you will need a running AzureOpenAI service with a deployed chat model, an API key and a URL to the service endpoint.
+
+(See last section in readme for more details)
 
 ## Usage
 
@@ -88,7 +97,19 @@ It will open the pdf file in Chrome with an appended `#page=123` anchor, which s
 
 This last part requires you to have put the Chrome executable path in the `Appsettings.json` file.
 
-## QDrant
+### RAG (Retrieval Augmented Generation)
+
+If you have a running Azure OpenAI service with a deployed chat model, you can use the RAG part of the application.
+
+You just need to add the `-rag` flag to the search command:
+
+```powershell
+dotnet run search "Should I mock a third party REST api during development?" -rag
+```
+
+## The required services
+
+### QDrant
 
 ```powershell
 docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
@@ -96,8 +117,16 @@ docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
 
 http://localhost:6333/dashboard#/welcome
 
-## Ollama
+### Ollama
 
 Download or use the docker image from <https://ollama.com/> and pull the `nomic-embed-txt` model.
 
 With docker: <https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image>
+
+### Azure OpenAI
+
+Create an Azure OpenAI service and deploy a chat model.
+
+1. Create Azure resource group
+2. Add an Azure Open AI Service
+3. Deploy a gpt4o or similar chat completion model to the service
