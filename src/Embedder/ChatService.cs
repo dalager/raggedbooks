@@ -2,7 +2,11 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 
+#pragma warning disable SKEXP0050
+
 namespace Embedder;
+
+#pragma warning disable SKEXP0001
 
 public class ChatService
 {
