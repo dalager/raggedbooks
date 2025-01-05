@@ -2,10 +2,7 @@
 #pragma warning disable SKEXP0001
 #pragma warning disable SKEXP0050
 #pragma warning disable SKEXP0070
-
 using System.Diagnostics;
-using Embedder;
-using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
@@ -13,10 +10,13 @@ using Microsoft.SemanticKernel.Connectors.Qdrant;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Text;
 using Qdrant.Client;
-using Kernel = Microsoft.SemanticKernel.Kernel;
+
+namespace Embedder;
 
 internal class Program
 {
+    private static ChatService? _chatService;
+    private static ITextEmbeddingGenerationService? _textEmbeddingGenerationService;
     private static readonly AzureOpenAiSettings azureOpenAiSettings = new();
     private static readonly RaggedBookConfig raggedBookConfig = new();
 
@@ -34,7 +34,7 @@ internal class Program
         raggedBookConfig.ValidateConfiguration();
 
         Kernel kernel = InitializeKernel();
-
+        _chatService = new ChatService(kernel);
         if (args.Length == 0)
         {
             Console.WriteLine(
@@ -47,16 +47,16 @@ internal class Program
         }
 
         if (args[0] == "import-file")
-            await ImportFileAndCreateEmbeddings(args, kernel);
+            await ImportFileAndCreateEmbeddings(args);
         if (args[0] == "import-folder")
-            await ImportFileAndCreateEmbeddingsInFolder(args, kernel);
+            await ImportFileAndCreateEmbeddingsInFolder(args);
         else if (args[0] == "search")
-            await SearchEmbeddings(args, kernel);
+            await PerformSearch(args);
         else
             Console.WriteLine("Invalid command");
     }
 
-    private static async Task ImportFileAndCreateEmbeddingsInFolder(string[] args, Kernel kernel)
+    private static async Task ImportFileAndCreateEmbeddingsInFolder(string[] args)
     {
         var folder = args[1];
         if (!Directory.Exists(folder))
@@ -67,28 +67,49 @@ internal class Program
         var files = Directory.GetFiles(folder, "*.pdf");
         foreach (var file in files)
         {
-            await ImportFileAndCreateEmbeddings(new[] { "import-file", file }, kernel);
+            await ImportFileAndCreateEmbeddings(new[] { "import-file", file });
         }
     }
 
-    private static async Task SearchEmbeddings(string[] args, Kernel kernel)
+    private static async Task PerformSearch(string[] args)
     {
         var query = args[1];
         var collection = await InitializeVectorStore();
-        var textEmbeddingGenerationService =
-            kernel.GetRequiredService<ITextEmbeddingGenerationService>();
 
-        var searchVector = await textEmbeddingGenerationService.GenerateEmbeddingAsync(query);
-        var resultcount = 1;
+        var searchVector = await _textEmbeddingGenerationService.GenerateEmbeddingAsync(query);
+        var resultcount = 5;
         bool showcontent = args.Contains("-content", StringComparer.InvariantCultureIgnoreCase);
 
         var searchResult = await collection.VectorizedSearchAsync(
             searchVector,
             new VectorSearchOptions { Top = resultcount, IncludeVectors = false }
         );
-
-        await foreach (var result in searchResult.Results)
+        var searchResults = searchResult.Results.ToBlockingEnumerable().Select(x => x).ToList();
+        if (searchResults.Count == 0)
         {
+            Console.WriteLine("No results");
+            return;
+        }
+        if (args.Contains("-rag"))
+        {
+            var contexts = searchResults.Select(x => x.Record.Content).ToArray();
+            var books = searchResults.Select(x => x.Record.Book).Distinct().ToArray();
+            Console.WriteLine(
+                $"Asking GPT with {resultcount} contexts. from these {books.Length} books:"
+            );
+            foreach (var book in books)
+            {
+                Console.WriteLine($" - {book}");
+            }
+            var response = await _chatService.AskRaggedQuestion(query, contexts.ToArray());
+
+            Console.WriteLine("--------- Answer -------------");
+            Console.WriteLine(response);
+        }
+        else
+        {
+            var result = searchResults[0];
+
             Console.WriteLine($"Search score: {result.Score}");
             Console.WriteLine($"Key: {result.Record.Key}");
             Console.WriteLine($"Book: {result.Record.Book}");
@@ -112,10 +133,11 @@ internal class Program
             {
                 Process.Start(raggedBookConfig.ChromeExePath, fileLink);
             }
+            //}
         }
     }
 
-    private static async Task ImportFileAndCreateEmbeddings(string[] args, Kernel kernel)
+    private static async Task ImportFileAndCreateEmbeddings(string[] args)
     {
         if (args.Length < 2)
         {
@@ -132,8 +154,6 @@ internal class Program
         var bookname = Path.GetFileNameWithoutExtension(file);
 
         Console.WriteLine($"Importing file: {bookname}");
-        var textEmbeddingGenerationService =
-            kernel.GetRequiredService<ITextEmbeddingGenerationService>();
 
         var pages = await TextExtractor.GetContentAsync(File.OpenRead(file));
         const int MaxTokensPerLine = 300;
@@ -151,7 +171,7 @@ internal class Program
                 OverlapTokens
             );
 
-            var embeddings = await textEmbeddingGenerationService.GenerateEmbeddingsAsync(
+            var embeddings = await _textEmbeddingGenerationService.GenerateEmbeddingsAsync(
                 paragraphs
             );
 
@@ -213,6 +233,9 @@ internal class Program
         builder.AddAzureOpenAIChatCompletion(azureOpenAiSettings.ModelId, azureEndpoint, apiKey);
 
         var kernel = builder.Build();
+        _textEmbeddingGenerationService =
+            kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+
         return kernel;
     }
 }
