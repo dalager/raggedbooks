@@ -47,7 +47,8 @@ dotnet run search "what is an ADR?"
 
 It will give you the first result with the book title and the chapter and page where the search query was found.
 
-**With content**
+#### With content
+
 If you want to see the matching content add the `-content` flag:
 
 ```powershell
@@ -72,20 +73,20 @@ just one way to articulate the various trade-offs we make around where we group
 code, and why. All we can strive to do is to find the right balance between these two
 ideas, one that makes the most sense for your given context and the problems you are
 currently facing.
-Remember, the world isn’t static—it’s possible that as your system requirements
-change, you’ll find reasons to revisit your decisions. Sometimes parts of your system
-may be going through so much change that stability might be impossible. We’ll look
+Remember, the world isn't static—it's possible that as your system requirements
+change, you'll find reasons to revisit your decisions. Sometimes parts of your system
+may be going through so much change that stability might be impossible. We'll look
 at an example of this in Chapter 3 when I share the experiences of the product devel‐
 opment team behind Snap CI.
 Types of Coupling
-You could infer from the preceding overview above that all coupling is bad. That isn’t
+You could infer from the preceding overview above that all coupling is bad. That isn't
 strictly true. Ultimately, some coupling in our system will be unavoidable. What we
 want to do is reduce how much coupling we have.
 ```
 
 (The matching book is "Building Microservices" by Sam Newman, <https://samnewman.io/books/building_microservices_2nd_edition/> )
 
-**Open the page in the browser**
+#### Open the page in the browser
 
 If you want to open the referenced page in the book, add the `-open` flag:
 
@@ -119,7 +120,7 @@ The answer will be printed to the console as markdown.
 docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
 ```
 
-http://localhost:6333/dashboard#/welcome
+<http://localhost:6333/dashboard#/welcome>
 
 ### Ollama
 
