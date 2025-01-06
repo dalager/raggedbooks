@@ -107,6 +107,10 @@ You just need to add the `-rag` flag to the search command:
 dotnet run search "Should I mock a third party REST api during development?" -rag
 ```
 
+This will stitch the content blocks from the 5 best search results together and ask the chat model the question using the provided context as grounding.
+
+The answer will be printed to the console as markdown.
+
 ## The required services
 
 ### QDrant
