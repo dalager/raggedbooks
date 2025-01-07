@@ -1,5 +1,7 @@
 using Microsoft.Extensions.VectorData;
 
+namespace RaggedBooks.Core;
+
 public sealed class ContentChunk
 {
     [VectorStoreRecordKey]

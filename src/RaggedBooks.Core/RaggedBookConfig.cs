@@ -1,4 +1,4 @@
-﻿namespace Embedder;
+﻿namespace RaggedBooks.Core;
 
 public class RaggedBookConfig
 {

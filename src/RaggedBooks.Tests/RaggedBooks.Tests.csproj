@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Embedder\Embedder.csproj" />
+    <ProjectReference Include="..\RaggedBooks.Core\RaggedBooks.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

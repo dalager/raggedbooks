@@ -1,4 +1,6 @@
-﻿namespace EmbedderTests;
+﻿using RaggedBooks.Core;
+
+namespace EmbedderTests;
 
 public class Tests
 {

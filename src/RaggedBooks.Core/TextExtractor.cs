@@ -2,6 +2,8 @@ using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using UglyToad.PdfPig.Outline;
 
+namespace RaggedBooks.Core;
+
 public static class TextExtractor
 {
     public record Page(string TextContent, int pagenumber);

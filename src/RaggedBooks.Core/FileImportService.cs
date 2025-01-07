@@ -1,10 +1,11 @@
 ﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Text;
+
 #pragma warning disable SKEXP0050
 #pragma warning disable SKEXP0001
 
-namespace Embedder;
+namespace RaggedBooks.Core;
 
 public class FileImportService
 {
@@ -71,7 +72,12 @@ public class FileImportService
                 paragraphs
             );
 
-            foreach (var (index, paragraph) in paragraphs.Select((x, index) => (index, x)))
+            foreach (
+                var (index, paragraph) in Enumerable.Select<string, (int index, string x)>(
+                    paragraphs,
+                    (x, index) => (index, x)
+                )
+            )
             {
                 var embedding = embeddings[index];
                 var chunk = new ContentChunk

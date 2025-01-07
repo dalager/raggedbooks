@@ -3,9 +3,10 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
 using Microsoft.SemanticKernel.Embeddings;
 using Qdrant.Client;
+
 #pragma warning disable SKEXP0001
 
-namespace Embedder;
+namespace RaggedBooks.Core;
 
 public class VectorSearchService
 {

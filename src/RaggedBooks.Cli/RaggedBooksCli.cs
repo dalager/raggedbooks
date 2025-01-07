@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using RaggedBooks.Core;
 
 namespace Embedder;
 
