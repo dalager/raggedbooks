@@ -1,28 +1,18 @@
 ﻿using System.Diagnostics;
+using Embedder;
 using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
 
-namespace Embedder;
+namespace RaggedBooks.Cli;
 
-public class RaggedBooksCli
+public class RaggedBooksCli(
+    FileImportService fileImportService,
+    VectorSearchService vectorSearchService,
+    ChatService chatService,
+    IOptions<RaggedBookConfig> raggedBookConfig
+)
 {
-    private readonly FileImportService _fileImportService;
-    private readonly VectorSearchService _vectorSearchService;
-    private readonly ChatService _chatService;
-    private readonly RaggedBookConfig _raggedBookConfig;
-
-    public RaggedBooksCli(
-        FileImportService fileImportService,
-        VectorSearchService vectorSearchService,
-        ChatService chatService,
-        IOptions<RaggedBookConfig> raggedBookConfig
-    )
-    {
-        _fileImportService = fileImportService;
-        _vectorSearchService = vectorSearchService;
-        _chatService = chatService;
-        _raggedBookConfig = raggedBookConfig.Value;
-    }
+    private readonly RaggedBookConfig _raggedBookConfig = raggedBookConfig.Value;
 
     public async Task Run(string[] args)
     {
@@ -38,9 +28,9 @@ public class RaggedBooksCli
         }
 
         if (args[0] == "import-file")
-            await _fileImportService.ImportFileAndCreateEmbeddings(args);
+            await fileImportService.ImportFileAndCreateEmbeddings(args);
         if (args[0] == "import-folder")
-            await _fileImportService.ImportFileAndCreateEmbeddingsInFolder(args);
+            await fileImportService.ImportFileAndCreateEmbeddingsInFolder(args);
         else if (args[0] == "search")
             await PerformSearch(args);
         else
@@ -52,7 +42,7 @@ public class RaggedBooksCli
         var query = args[1];
         var resultcount = 5;
 
-        var searchResult = await _vectorSearchService.SearchVectorStore(query);
+        var searchResult = await vectorSearchService.SearchVectorStore(query);
         var searchResults = searchResult.Results.ToBlockingEnumerable().Select(x => x).ToList();
         if (searchResults.Count == 0)
         {
@@ -72,7 +62,7 @@ public class RaggedBooksCli
                 Console.WriteLine($" - {book}");
             }
 
-            var response = await _chatService.AskRaggedQuestion(query, contexts.ToArray());
+            var response = await chatService.AskRaggedQuestion(query, contexts.ToArray());
 
             Console.WriteLine("--------- Answer -------------");
             Console.WriteLine(response);
