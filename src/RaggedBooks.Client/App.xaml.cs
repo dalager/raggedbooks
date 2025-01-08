@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RaggedBooks.Client.ViewModels;
 using RaggedBooks.Core;
 
 namespace RaggedBooks.Client;
