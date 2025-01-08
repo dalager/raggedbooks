@@ -10,11 +10,10 @@ namespace RaggedBooks.Core
 {
     public static class ServiceInitialization
     {
-        public static IServiceProvider CreateServices<T>()
-            where T : class
+        public static ServiceCollection CreateServices(IConfiguration configuration)
         {
             var services = new ServiceCollection();
-            //services.AddLogging(builder => builder.AddConsole());
+            services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
             services.AddQdrantVectorStore();
             services.AddSingleton<ChatService>();
             services.AddSingleton<VectorSearchService>();
@@ -44,16 +43,6 @@ namespace RaggedBooks.Core
                 return kernel;
             });
 
-            var configFolder = new DirectoryInfo(Path.Combine(@"..\Config\"));
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(
-                    Path.Combine(configFolder.FullName, "Appsettings.json"),
-                    optional: false,
-                    reloadOnChange: true
-                )
-                .Build();
-
             services.Configure<AzureOpenAiSettings>(options =>
                 configuration.GetSection("AzureOpenAiSettings").Bind(options)
             );
@@ -61,9 +50,7 @@ namespace RaggedBooks.Core
                 configuration.GetSection("AppSettings").Bind(options)
             );
 
-            services.AddTransient<T>();
-
-            return services.BuildServiceProvider();
+            return services;
         }
     }
 }
