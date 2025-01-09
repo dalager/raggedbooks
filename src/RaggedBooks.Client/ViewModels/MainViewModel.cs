@@ -1,8 +1,10 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Embedder;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using RaggedBooks.Core;
 
@@ -19,6 +21,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
         VectorSearchService vectorSearchService,
         ChatService chatService,
         Kernel kernel,
+        IOptions<RaggedBookConfig> raggedConfigOptions,
         ILogger<MainViewModel> logger
     )
     {
@@ -26,12 +29,36 @@ public class MainViewModel : ObservableObject, IMainViewModel
         _chatService = chatService;
         _kernel = kernel;
         _logger = logger;
+        _raggedConfig = raggedConfigOptions.Value;
     }
 
     private ICommand _searchCommand;
     private string _query;
 
     public ICommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
+
+    private ICommand _lookupCommand;
+    public ICommand LookupCommand => _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
+
+    private async Task ExecuteLookupAsync()
+    {
+        _logger.LogInformation("Executing lookup");
+        try
+        {
+            var searchResult = await _vectorSearchService.SearchVectorStore(Query);
+            var searchResults = searchResult.Results.ToBlockingEnumerable().Select(x => x).ToList();
+            var result = searchResults[0];
+            var bookfolder = _raggedConfig.PdfFolder;
+            var fileLink =
+                $"file://{bookfolder}{result.Record.Book}.pdf#page={result.Record.PageNumber}";
+            fileLink = fileLink.Replace(" ", "%20");
+            Process.Start(_raggedConfig.ChromeExePath, fileLink);
+        }
+        catch (Exception e)
+        {
+            SearchResults = "Error: " + e.Message;
+        }
+    }
 
     public string Query
     {
@@ -44,6 +71,8 @@ public class MainViewModel : ObservableObject, IMainViewModel
     }
 
     private string _searchResults;
+    private readonly RaggedBookConfig _raggedConfig;
+
     public string SearchResults
     {
         get => _searchResults;

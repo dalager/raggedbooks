@@ -22,9 +22,10 @@ internal class Program
             )
             .Build();
 
-        var serviceCollection = ServiceInitialization.CreateServices<RaggedBooksCli>(configuration);
-        var services = serviceCollection.BuildServiceProvider();
-        var cli = services.GetRequiredService<RaggedBooksCli>();
+        var serviceCollection = ServiceInitialization.CreateServices(configuration);
+        serviceCollection.AddSingleton<RaggedBooksCli>();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var cli = serviceProvider.GetRequiredService<RaggedBooksCli>();
         await cli.Run(args);
     }
 }

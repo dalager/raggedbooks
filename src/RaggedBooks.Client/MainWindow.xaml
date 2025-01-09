@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
         <Label Content="Question for the books" Margin="10" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
         <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" Margin="10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <Button Content="Look up" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="1"/>
+        <Button Content="Look up" Command="{Binding LookupCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="1"/>
         <Button Content="Ask" Command="{Binding SearchCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="2"/>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3">
             <StackPanel>
