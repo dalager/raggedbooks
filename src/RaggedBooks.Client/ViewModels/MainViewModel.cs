@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using Embedder;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.SemanticKernel;
 using RaggedBooks.Core;
 
 namespace RaggedBooks.Client.ViewModels;
@@ -14,30 +13,27 @@ public class MainViewModel : ObservableObject, IMainViewModel
 {
     private readonly VectorSearchService _vectorSearchService;
     private readonly ChatService _chatService;
-    private readonly Kernel _kernel;
     private readonly ILogger<MainViewModel> _logger;
 
     public MainViewModel(
         VectorSearchService vectorSearchService,
         ChatService chatService,
-        Kernel kernel,
         IOptions<RaggedBookConfig> raggedConfigOptions,
         ILogger<MainViewModel> logger
     )
     {
         _vectorSearchService = vectorSearchService;
         _chatService = chatService;
-        _kernel = kernel;
         _logger = logger;
         _raggedConfig = raggedConfigOptions.Value;
     }
 
-    private ICommand _searchCommand;
-    private string _query;
+    private ICommand _searchCommand = null!;
+    private string _query = string.Empty;
 
     public ICommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
 
-    private ICommand _lookupCommand;
+    private ICommand _lookupCommand = null!;
     public ICommand LookupCommand => _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
 
     private async Task ExecuteLookupAsync()
@@ -70,7 +66,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
         }
     }
 
-    private string _searchResults;
+    private string _searchResults = string.Empty;
     private readonly RaggedBookConfig _raggedConfig;
 
     public string SearchResults
