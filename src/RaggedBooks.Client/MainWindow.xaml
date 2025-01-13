@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:client="clr-namespace:RaggedBooks.Client"
         xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
-
         Title="Ragged Books" Height="350" Width="525">
     <Window.Resources>
         <client:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
@@ -17,18 +16,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Question for the books" Margin="10" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" Margin="10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <Label Content="Question for the books" Margin="6,0,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,20,0" Padding="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
         <Button Content="Look up" Command="{Binding LookupCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="1"/>
-        <Button Content="Ask" Command="{Binding SearchCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="2"/>
+        <Button Content="Ask" Command="{Binding SearchCommand}" Width="100" Height="30" Margin="10,0,20,0" Grid.Row="2" Grid.Column="2"/>
         <mdxam:MarkdownScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,20,0,0" 
                                     Markdown="{Binding SearchResults}"/>
-
+        <StatusBar Grid.Row="4" Grid.ColumnSpan="3" Grid.Column="0">
+            <StatusBarItem HorizontalAlignment="Left"><TextBlock HorizontalAlignment="Right" Text="{Binding StatusText}" Margin="2"/></StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right"><TextBlock HorizontalAlignment="Right" Margin="2">Ragged Books, Christian Dalager 2025</TextBlock></StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

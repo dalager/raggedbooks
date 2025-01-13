@@ -14,6 +14,13 @@ public class MainViewModel : ObservableObject, IMainViewModel
     private readonly VectorSearchService _vectorSearchService;
     private readonly ChatService _chatService;
     private readonly ILogger<MainViewModel> _logger;
+    private ICommand _lookupCommand = null!;
+    private ICommand _searchCommand = null!;
+    private string _query = string.Empty;
+    private string _searchResults = string.Empty;
+    private string _statusText = DefaultStatusText;
+    private readonly RaggedBookConfig _raggedConfig;
+    private const string DefaultStatusText = "";
 
     public MainViewModel(
         VectorSearchService vectorSearchService,
@@ -28,17 +35,13 @@ public class MainViewModel : ObservableObject, IMainViewModel
         _raggedConfig = raggedConfigOptions.Value;
     }
 
-    private ICommand _searchCommand = null!;
-    private string _query = string.Empty;
-
     public ICommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
-
-    private ICommand _lookupCommand = null!;
     public ICommand LookupCommand => _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
 
     private async Task ExecuteLookupAsync()
     {
         _logger.LogInformation("Executing lookup");
+        StatusText = "Semantic search...";
         try
         {
             var searchResult = await _vectorSearchService.SearchVectorStore(Query);
@@ -54,6 +57,10 @@ public class MainViewModel : ObservableObject, IMainViewModel
         {
             SearchResults = "Error: " + e.Message;
         }
+        finally
+        {
+            StatusText = DefaultStatusText;
+        }
     }
 
     public string Query
@@ -66,8 +73,15 @@ public class MainViewModel : ObservableObject, IMainViewModel
         }
     }
 
-    private string _searchResults = string.Empty;
-    private readonly RaggedBookConfig _raggedConfig;
+    public string StatusText
+    {
+        get => _statusText;
+        set
+        {
+            _statusText = value;
+            OnPropertyChanged();
+        }
+    }
 
     public string SearchResults
     {
@@ -84,22 +98,13 @@ public class MainViewModel : ObservableObject, IMainViewModel
         _logger.LogInformation("Executing search");
         try
         {
+            StatusText = "Semantic search...";
+
             var searchResult = await _vectorSearchService.SearchVectorStore(Query);
             var searchResults = searchResult.Results.ToBlockingEnumerable().Select(x => x).ToList();
 
-            //SearchResults = results
-            //    .Results.ToBlockingEnumerable(CancellationToken.None)
-            //    .FirstOrDefault()
-            //    .Record.Content;
-
-
             var contexts = searchResults.Select(x => x.Record.Content).ToArray();
-            //var books = searchResults.Select(x => x.Record.Book).Distinct().ToArray();
-            //foreach (var book in books)
-            //{
-            // Console.WriteLine($" - {book}");
-            //}
-
+            StatusText = "Asking LLM...";
             var response = await _chatService.AskRaggedQuestion(Query, contexts.ToArray());
             SearchResults = response;
         }
@@ -107,6 +112,10 @@ public class MainViewModel : ObservableObject, IMainViewModel
         {
             _logger.LogError(ex, "Error executing search");
             SearchResults = "Error executing search";
+        }
+        finally
+        {
+            StatusText = DefaultStatusText;
         }
 
         // Do something with the results
