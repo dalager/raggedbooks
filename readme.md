@@ -7,8 +7,11 @@ It demonstrates
 1. Extracting text from PDF files and creating a Vector store with embeddings
 2. Searching the vector store with a query and returning the most relevant results
 3. Using the RAG (Retrieval Augmented Generation) technique to provide groundings for the question to given to a LLM.
+4. Creating a simple windows application for running the RAG tool as the contents need to stay on the local machine.
 
 (**Note**: I have bought these books and the content is not removed from my computer. The embeddings are generated and stored locally on the same computer and not shared or exposed to the internet.)
+
+![Screenshot of WPF App](screenshot.png)
 
 ## Requirements
 
@@ -17,11 +20,18 @@ It demonstrates
 
 - A running Ollama (<https://ollama.com/>) installation with a pulled `nomic-embed-text` embedding model. You should be able to open <http://localhost:11434/api/tags> in your browser and see a list of models with the `nomic-embed-text` model in it.
 - A running QDrant Vector store (<https://github.com/qdrant/qdrant>) in docker exposing default ports, (6333,6334). You should be able to open <http://localhost:6333> in your browser.
+
+Ollama and Quadrant can be started in a docker container with the following commands:
+
+```powershell
+docker compose up -d
+```
+
 - For the RAG part you will need a running AzureOpenAI service with a deployed chat model, an API key and a URL to the service endpoint.
 
 (See last section in readme for more details)
 
-## Usage
+## CLI Usage
 
 ### Importing books
 
@@ -112,7 +122,17 @@ This will stitch the content blocks from the 5 best search results together and 
 
 The answer will be printed to the console as markdown.
 
+## The Windows Desktop Application (WPF)
+
 ## The required services
+
+The easiest way to get the required services up and running is to use the provided docker-compose file.
+
+```powershell
+docker compose up -d
+```
+
+Otherwise you can do it manually:
 
 ### QDrant
 
