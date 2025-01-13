@@ -124,6 +124,15 @@ The answer will be printed to the console as markdown.
 
 ## The Windows Desktop Application (WPF)
 
+The WPF application is a simple interface for the search functionality.
+You can run from within Visual Studio or with the following command:
+
+```powershell
+dotnet run --project .\RaggedBooks.Client\RaggedBooks.Client.csproj
+```
+
+Remember that without the LLM configured in Appsettings, you will not be able to "Ask" questions, just lookup content in the books.
+
 ## The required services
 
 The easiest way to get the required services up and running is to use the provided docker-compose file.

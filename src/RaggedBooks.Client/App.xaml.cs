@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RaggedBooks.Client.ViewModels;
@@ -16,14 +15,8 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        var configFolder = new DirectoryInfo(Path.Combine(@"..\..\..\..\Config\"));
         var configuration = new ConfigurationBuilder()
-            //.SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(
-                Path.Combine(configFolder.FullName, "Appsettings.json"),
-                optional: false,
-                reloadOnChange: true
-            )
+            .AddJsonFile("Appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
         var serviceCollection = ServiceInitialization.CreateServices(configuration);
