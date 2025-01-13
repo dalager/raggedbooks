@@ -15,7 +15,7 @@ It demonstrates
 - .NET 9
 - Docker
 
-- A running Ollama (<https://ollama.com/>) installation with a pulled `nomic-embed-txt` embedding model. You should be able to open <http://localhost:11434/api/tags> in your browser and see a list of models with the `nomic-embed-txt` model in it.
+- A running Ollama (<https://ollama.com/>) installation with a pulled `nomic-embed-text` embedding model. You should be able to open <http://localhost:11434/api/tags> in your browser and see a list of models with the `nomic-embed-text` model in it.
 - A running QDrant Vector store (<https://github.com/qdrant/qdrant>) in docker exposing default ports, (6333,6334). You should be able to open <http://localhost:6333> in your browser.
 - For the RAG part you will need a running AzureOpenAI service with a deployed chat model, an API key and a URL to the service endpoint.
 

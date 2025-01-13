@@ -1,0 +1,27 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ragged-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/ollama/storage
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: ragged-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+volumes:
+  ollama_data:
+  qdrant_data:
