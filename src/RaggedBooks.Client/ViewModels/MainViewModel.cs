@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Embedder;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
@@ -49,7 +48,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
             var result = searchResults[0];
             var bookfolder = _raggedConfig.PdfFolder;
             var fileLink =
-                $"file://{bookfolder}{result.Record.Book}.pdf#page={result.Record.PageNumber}";
+                $"file://{bookfolder}{result.Record.BookFilename}#page={result.Record.PageNumber}";
             fileLink = fileLink.Replace(" ", "%20");
             Process.Start(_raggedConfig.ChromeExePath, fileLink);
         }
@@ -103,7 +102,20 @@ public class MainViewModel : ObservableObject, IMainViewModel
             var searchResult = await _vectorSearchService.SearchVectorStore(Query);
             var searchResults = searchResult.Results.ToBlockingEnumerable().Select(x => x).ToList();
 
-            var contexts = searchResults.Select(x => x.Record.Content).ToArray();
+            var matchingRecords = searchResults.Select(x => x.Record).ToArray();
+            var contexts = new List<string>();
+            foreach (var record in matchingRecords)
+            {
+                var text =
+                    $@"""
+                Chapter: {record.Chapter}
+                Book: {record.Book}
+                Text: {record.Content}
+                """;
+
+                contexts.Add(text);
+            }
+
             StatusText = "Asking LLM...";
             var response = await _chatService.AskRaggedQuestion(Query, contexts.ToArray());
             SearchResults = response;

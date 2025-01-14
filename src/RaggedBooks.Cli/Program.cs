@@ -4,27 +4,24 @@
 #pragma warning disable SKEXP0070
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
 
 namespace RaggedBooks.Cli;
 
-internal class Program
+public static class Program
 {
     private static async global::System.Threading.Tasks.Task Main(string[] args)
     {
-        var configFolder = new DirectoryInfo(Path.Combine(@"..\Config\"));
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(
-                Path.Combine(configFolder.FullName, "Appsettings.json"),
-                optional: false,
-                reloadOnChange: true
-            )
+            .AddJsonFile("Appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
         var serviceCollection = ServiceInitialization.CreateServices(configuration);
         serviceCollection.AddSingleton<RaggedBooksCli>();
+        serviceCollection.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace).AddConsole());
         var serviceProvider = serviceCollection.BuildServiceProvider();
+
         var cli = serviceProvider.GetRequiredService<RaggedBooksCli>();
         await cli.Run(args);
     }

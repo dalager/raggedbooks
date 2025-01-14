@@ -1,4 +1,7 @@
-﻿using Microsoft.SemanticKernel;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Text;
 
@@ -11,12 +14,21 @@ public class FileImportService
 {
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
     private readonly VectorSearchService _vectorSearchService;
+    private readonly ILogger<FileImportService> _logger;
+    private readonly RaggedBookConfig _config;
 
-    public FileImportService(Kernel kernel, VectorSearchService vectorSearchService)
+    public FileImportService(
+        Kernel kernel,
+        VectorSearchService vectorSearchService,
+        ILogger<FileImportService> logger,
+        IOptions<RaggedBookConfig> config
+    )
     {
         _textEmbeddingGenerationService =
             kernel.GetRequiredService<ITextEmbeddingGenerationService>();
         _vectorSearchService = vectorSearchService;
+        this._logger = logger;
+        _config = config.Value;
     }
 
     public async Task ImportFileAndCreateEmbeddingsInFolder(string[] args)
@@ -48,24 +60,25 @@ public class FileImportService
             return;
         }
 
-        var bookname = Path.GetFileNameWithoutExtension(file);
+        _logger.LogInformation("Importing file: {Bookname}", file);
+        var book = await TextExtractor.LoadBook(file);
 
-        Console.WriteLine($"Importing file: {bookname}");
-
-        var pages = await TextExtractor.GetContentAsync(File.OpenRead(file));
-        const int MaxTokensPerLine = 300;
-        const int MaxTokensPerParagraph = 512; // 1024 for ada, 512 for mxbai
-        const int OverlapTokens = 100;
-        var chapters = TextExtractor.GetChapters(File.OpenRead(file));
-        var bookmarktree = new BookmarkTree(chapters);
+        var pages = book.Pages;
         var chunks = new List<ContentChunk>();
-
+        var sw = Stopwatch.StartNew();
+        _logger.LogInformation(
+            "Found {PageCount} pages in {BookTitle} {FileName}. Creating embeddings...",
+            pages.Count,
+            book.Title,
+            book.Filename
+        );
+        int bookIndex = 0;
         foreach (var page in pages)
         {
             var paragraphs = TextChunker.SplitPlainTextParagraphs(
-                TextChunker.SplitPlainTextLines(page.TextContent, MaxTokensPerLine),
-                MaxTokensPerParagraph,
-                OverlapTokens
+                TextChunker.SplitPlainTextLines(page.TextContent, _config.MaxTokensPerLine),
+                _config.MaxTokensPerParagraph,
+                _config.OverlapTokens
             );
 
             var embeddings = await _textEmbeddingGenerationService.GenerateEmbeddingsAsync(
@@ -82,17 +95,26 @@ public class FileImportService
                 var embedding = embeddings[index];
                 var chunk = new ContentChunk
                 {
-                    Key = Guid.NewGuid(),
-                    Book = bookname,
-                    Chapter = bookmarktree.GetChapterPath(page.pagenumber),
+                    Id = Guid.NewGuid(),
+                    Book = book.Title,
+                    Chapter = book.BookmarkTree.GetChapterPath(page.pagenumber),
                     PageNumber = page.pagenumber,
                     Content = paragraph,
                     ContentEmbedding = embedding,
+                    Index = bookIndex,
+                    BookFilename = book.Filename,
                 };
                 chunks.Add(chunk);
+                bookIndex++;
             }
-
-            await _vectorSearchService.UpsertItems(chunks.ToArray());
         }
+        _logger.LogInformation(
+            "Created {ChunkCount} embeddings in {ElapsedMilliseconds}ms, averaging {AvgMs}ms per embedding",
+            chunks.Count,
+            sw.ElapsedMilliseconds,
+            sw.ElapsedMilliseconds / chunks.Count
+        );
+
+        await _vectorSearchService.UpsertItems(chunks.ToArray());
     }
 }

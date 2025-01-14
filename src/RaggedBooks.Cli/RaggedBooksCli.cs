@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Embedder;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
 
@@ -9,13 +9,15 @@ public class RaggedBooksCli(
     FileImportService fileImportService,
     VectorSearchService vectorSearchService,
     ChatService chatService,
-    IOptions<RaggedBookConfig> raggedBookConfig
+    IOptions<RaggedBookConfig> raggedBookConfig,
+    ILogger<RaggedBooksCli> logger
 )
 {
     private readonly RaggedBookConfig _raggedBookConfig = raggedBookConfig.Value;
 
     public async Task Run(string[] args)
     {
+        logger.LogInformation("Hej");
         if (args.Length == 0)
         {
             Console.WriteLine(
@@ -29,7 +31,7 @@ public class RaggedBooksCli(
 
         if (args[0] == "import-file")
             await fileImportService.ImportFileAndCreateEmbeddings(args);
-        if (args[0] == "import-folder")
+        else if (args[0] == "import-folder")
             await fileImportService.ImportFileAndCreateEmbeddingsInFolder(args);
         else if (args[0] == "search")
             await PerformSearch(args);
@@ -73,7 +75,7 @@ public class RaggedBooksCli(
             bool showcontent = args.Contains("-content", StringComparer.InvariantCultureIgnoreCase);
 
             Console.WriteLine($"Search score: {result.Score}");
-            Console.WriteLine($"Key: {result.Record.Key}");
+            Console.WriteLine($"Key: {result.Record.Id}");
             Console.WriteLine($"Book: {result.Record.Book}");
             Console.WriteLine($"Chapter: {result.Record.Chapter}");
             Console.WriteLine($"Page: {result.Record.PageNumber}");
@@ -84,7 +86,7 @@ public class RaggedBooksCli(
 
             var bookfolder = _raggedBookConfig.PdfFolder;
             var fileLink =
-                $"file://{bookfolder}{result.Record.Book}.pdf#page={result.Record.PageNumber}";
+                $"file://{bookfolder}{result.Record.BookFilename}#page={result.Record.PageNumber}";
 
             // url encode the file link
             fileLink = fileLink.Replace(" ", "%20");
@@ -95,7 +97,6 @@ public class RaggedBooksCli(
             {
                 Process.Start(_raggedBookConfig.ChromeExePath, fileLink);
             }
-            //}
         }
     }
 }

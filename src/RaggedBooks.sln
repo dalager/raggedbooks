@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Core", "RaggedB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Tests", "RaggedBooks.Tests\RaggedBooks.Tests.csproj", "{6CD5A530-D619-4C63-A921-FB51A741F2A1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{666293B8-4395-44DB-835E-9E7832A71F1C}"
+	ProjectSection(SolutionItems) = preProject
+		Config\Appsettings.json = Config\Appsettings.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

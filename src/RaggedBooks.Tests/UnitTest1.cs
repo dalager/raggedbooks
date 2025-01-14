@@ -1,19 +1,16 @@
 ﻿using RaggedBooks.Core;
 
-namespace EmbedderTests;
+namespace RaggedBooks.Tests;
 
 public class Tests
 {
-    [SetUp]
-    public void Setup() { }
-
     [Test]
     public async Task Test1()
     {
         var file =
             @"C:\projects\dalager\1 Projects\raggedbooks\data\softwarearchitecture_thehardparts.pdf";
         var stream = File.OpenRead(file);
-        var chaps = TextExtractor.GetChapters(stream);
+        var chaps = await TextExtractor.GetChapters(stream);
         Assert.That(chaps, Is.Not.Null);
 
         var bookmarktree = new BookmarkTree(chaps);

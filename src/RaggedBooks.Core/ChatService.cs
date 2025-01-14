@@ -4,22 +4,15 @@ using Microsoft.SemanticKernel.ChatCompletion;
 
 #pragma warning disable SKEXP0050
 
-namespace Embedder;
+namespace RaggedBooks.Core;
 
 #pragma warning disable SKEXP0001
 
-public class ChatService
+public class ChatService(Kernel kernel)
 {
-    private readonly Kernel _kernel;
-
-    public ChatService(Kernel kernel)
-    {
-        _kernel = kernel;
-    }
-
     public async Task<string> AskRaggedQuestion(string question, string[] contexts)
     {
-        var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
         var chat = new ChatHistory(
             """
@@ -57,7 +50,9 @@ public class ChatService
         var answer = await chatCompletionService.GetChatMessageContentAsync(chat)!;
 
         // Add question and answer to the chat history.
+#pragma warning disable S125
         //await SetChatHistoryAsync(conversationId, question, answer.Content!);
+#pragma warning restore S125
 
         return answer.Content!;
     }

@@ -1,9 +1,10 @@
-﻿using Embedder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
+using Serilog;
+
 #pragma warning disable SKEXP0070
 
 namespace RaggedBooks.Core
@@ -12,8 +13,19 @@ namespace RaggedBooks.Core
     {
         public static ServiceCollection CreateServices(IConfiguration configuration)
         {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .Enrich.FromLogContext()
+                .WriteTo.File(
+                    "log.txt",
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}"
+                )
+                .CreateLogger();
+
             var services = new ServiceCollection();
-            services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
+            services.AddLogging(l => l.AddSerilog(dispose: true));
+
             services.AddQdrantVectorStore();
             services.AddSingleton<ChatService>();
             services.AddSingleton<VectorSearchService>();
@@ -31,7 +43,7 @@ namespace RaggedBooks.Core
                 var kernelBuilder = Kernel.CreateBuilder();
                 kernelBuilder.Services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
                 kernelBuilder.AddOllamaTextEmbeddingGeneration(
-                    "nomic-embed-text",
+                    raggedBookConfig.EmbeddingModel,
                     raggedBookConfig.OllamaUrl
                 );
                 kernelBuilder.AddAzureOpenAIChatCompletion(
