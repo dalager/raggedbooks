@@ -18,31 +18,25 @@ It demonstrates
 - .NET 9
 - Docker
 
-- A running Ollama (<https://ollama.com/>) installation with a pulled `nomic-embed-text` embedding model. You should be able to open <http://localhost:11434/api/tags> in your browser and see a list of models with the `nomic-embed-text` model in it.
-- A running QDrant Vector store (<https://github.com/qdrant/qdrant>) in docker exposing default ports, (6333,6334). You should be able to open <http://localhost:6333> in your browser.
-
-Ollama and Quadrant can be started in a docker container with the following commands:
+Ollama and Quadrant must be started in a docker container with the following commands:
 
 ```powershell
 docker compose up -d
 ```
 
-### Loading the Embedding model
+### Loading the Embedding and ChatCompletion models
 
 You will need to import an embedding model into ollama - the project defaults to `mxbai-embed-large`.
 You can do this by executing the following command in the ollama container:
 
 ```powershell
 docker compose exec ollama sh -c 'ollama pull mxbai-embed-large'
+docker compose exec ollama sh -c 'ollama pull granite3.1-moe:1b'
 ```
 
-If you want to use a different model, you can change the `EmbeddingModel` in the `Appsettings.json` file -- note that you will have to re-import the books to get the correct embeddings and change the vector dimension in the Appsettings as well, as they differ from model to model.
+If you want to use different models, you can change the `EmbeddingModel` in the `Appsettings.json` file -- note that if you change your embedding model you will have to re-import the books to get the correct embeddings and change the vector dimension in the Appsettings as well, as they differ from model to model.
 
-### RAG and LLM requirements
-
-- For the RAG part you will need a running AzureOpenAI service with a deployed chat model, an API key and a URL to the service endpoint.
-
-(See last section in readme for more details)
+You can also go for an Azure Hosted ChatModel, see Appsettings
 
 ## CLI Usage
 
