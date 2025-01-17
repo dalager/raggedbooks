@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
 
 namespace RaggedBooks.Client.ViewModels;
@@ -15,6 +14,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
     private readonly ILogger<MainViewModel> _logger;
     private ICommand _lookupCommand = null!;
     private ICommand _searchCommand = null!;
+    private ICommand _focusTextCommand = null!;
     private string _query = string.Empty;
     private string _searchResults = string.Empty;
     private string _statusText = DefaultStatusText;
@@ -24,18 +24,21 @@ public class MainViewModel : ObservableObject, IMainViewModel
     public MainViewModel(
         VectorSearchService vectorSearchService,
         ChatService chatService,
-        IOptions<RaggedBookConfig> raggedConfigOptions,
+        RaggedBookConfig raggedConfigOptions,
         ILogger<MainViewModel> logger
     )
     {
         _vectorSearchService = vectorSearchService;
         _chatService = chatService;
         _logger = logger;
-        _raggedConfig = raggedConfigOptions.Value;
+        _raggedConfig = raggedConfigOptions;
     }
 
     public ICommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
     public ICommand LookupCommand => _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
+
+    // Command that triggers focus
+    public ICommand FocusTextCommand => _focusTextCommand ??= new AsyncRelayCommand(FocusText);
 
     private async Task ExecuteLookupAsync()
     {
@@ -131,5 +134,28 @@ public class MainViewModel : ObservableObject, IMainViewModel
         }
 
         // Do something with the results
+    }
+
+    private bool _isTextBoxFocused;
+
+    // Bind this to the attached property in XAML
+    public bool IsTextBoxFocused
+    {
+        get => _isTextBoxFocused;
+        set
+        {
+            if (_isTextBoxFocused != value)
+            {
+                _isTextBoxFocused = value;
+                OnPropertyChanged(nameof(IsTextBoxFocused));
+            }
+        }
+    }
+
+    private Task FocusText()
+    {
+        // Set IsTextBoxFocused to true (View sees this and sets focus).
+        IsTextBoxFocused = true;
+        return Task.CompletedTask;
     }
 }

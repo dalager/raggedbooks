@@ -6,4 +6,5 @@ public interface IMainViewModel
 {
     ICommand SearchCommand { get; }
     ICommand LookupCommand { get; }
+    ICommand FocusTextCommand { get; }
 }

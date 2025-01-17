@@ -9,6 +9,8 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Enter" Modifiers="Control" Command="{Binding SearchCommand}" />
+        <KeyBinding Key="G" Modifiers="Control" Command="{Binding LookupCommand}" />
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding FocusTextCommand}" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -23,10 +25,12 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Question for the books" Margin="6,0,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,20,0" Padding="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <Button Content="Look up" Command="{Binding LookupCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="1"/>
-        <Button Content="Ask" Command="{Binding SearchCommand}" Width="100" Height="30" Margin="10,0,20,0" Grid.Row="2" Grid.Column="2"/>
+        <Label Content="Question the books" Margin="6,0,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" 
+                 client:FocusExtension.IsFocused="{Binding IsTextBoxFocused, Mode=TwoWay}" 
+                 Margin="10,0,20,0" Padding="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" ToolTip="Ctrl+F"/>
+        <Button Content="Look up" Command="{Binding LookupCommand}" Width="100" Height="30" Margin="10" Grid.Row="2" Grid.Column="1" ToolTip="Ctrl+G"/>
+        <Button Content="Ask" Command="{Binding SearchCommand}" Width="100" Height="30" Margin="10,0,20,0" Grid.Row="2" Grid.Column="2" ToolTip="Ctrl+Enter"/>
         <mdxam:MarkdownScrollViewer Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="20,20,0,0" 
                                     Markdown="{Binding SearchResults}"/>
         <StatusBar Grid.Row="4" Grid.ColumnSpan="3" Grid.Column="0">
