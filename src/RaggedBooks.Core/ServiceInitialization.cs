@@ -26,6 +26,11 @@ namespace RaggedBooks.Core
             var services = new ServiceCollection();
             services.AddLogging(l => l.AddSerilog(dispose: true));
 
+            var raggedBookConfig = new RaggedBookConfig();
+            configuration.GetSection("AppSettings").Bind(raggedBookConfig);
+            raggedBookConfig.ValidateConfiguration();
+
+            services.AddSingleton(raggedBookConfig);
             services.AddQdrantVectorStore();
             services.AddSingleton<ChatService>();
             services.AddSingleton<VectorSearchService>();
@@ -35,21 +40,30 @@ namespace RaggedBooks.Core
                 var azureOpenAiSettings = serviceProvider
                     .GetRequiredService<IOptions<AzureOpenAiSettings>>()
                     .Value;
-                var raggedBookConfig = serviceProvider
-                    .GetRequiredService<IOptions<RaggedBookConfig>>()
-                    .Value;
-                var apiKey = azureOpenAiSettings.ApiKey;
-                var azureEndpoint = azureOpenAiSettings.Endpoint;
                 var kernelBuilder = Kernel.CreateBuilder();
                 kernelBuilder.Services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
+
+                if (!raggedBookConfig.UseLocalChatModel)
+                {
+                    var apiKey = azureOpenAiSettings.ApiKey;
+                    var azureEndpoint = azureOpenAiSettings.Endpoint;
+
+                    kernelBuilder.AddAzureOpenAIChatCompletion(
+                        azureOpenAiSettings.ModelId,
+                        azureEndpoint,
+                        apiKey
+                    );
+                }
+                else
+                {
+                    kernelBuilder.AddOllamaChatCompletion(
+                        raggedBookConfig.ChatCompletionModel,
+                        raggedBookConfig.OllamaUrl
+                    );
+                }
                 kernelBuilder.AddOllamaTextEmbeddingGeneration(
                     raggedBookConfig.EmbeddingModel,
                     raggedBookConfig.OllamaUrl
-                );
-                kernelBuilder.AddAzureOpenAIChatCompletion(
-                    azureOpenAiSettings.ModelId,
-                    azureEndpoint,
-                    apiKey
                 );
                 var kernel = kernelBuilder.Build();
                 return kernel;
@@ -57,9 +71,6 @@ namespace RaggedBooks.Core
 
             services.Configure<AzureOpenAiSettings>(options =>
                 configuration.GetSection("AzureOpenAiSettings").Bind(options)
-            );
-            services.Configure<RaggedBookConfig>(options =>
-                configuration.GetSection("AppSettings").Bind(options)
             );
 
             return services;

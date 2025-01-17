@@ -57,7 +57,7 @@ public class RaggedBooksCli(
             var contexts = searchResults.Select(x => x.Record.Content).ToArray();
             var books = searchResults.Select(x => x.Record.Book).Distinct().ToArray();
             Console.WriteLine(
-                $"Asking GPT with {resultcount} contexts. from these {books.Length} books:"
+                $"Asking ChatCompletionModel with {resultcount} contexts. from these {books.Length} books:"
             );
             foreach (var book in books)
             {
