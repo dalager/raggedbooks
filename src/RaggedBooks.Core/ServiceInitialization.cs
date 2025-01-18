@@ -17,9 +17,6 @@ namespace RaggedBooks.Core
         public static ServiceCollection CreateServices(IConfiguration configuration)
         {
             Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .Enrich.FromLogContext()
                 .WriteTo.File(
                     "raggedbooks_log.log",
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}"
@@ -27,7 +24,15 @@ namespace RaggedBooks.Core
                 .CreateLogger();
 
             var services = new ServiceCollection();
-            services.AddLogging(l => l.AddSerilog(dispose: true));
+            services.AddLogging(l =>
+            {
+                l.AddSerilog(dispose: true);
+                l.AddSimpleConsole(opts =>
+                {
+                    opts.SingleLine = true;
+                    opts.TimestampFormat = "HH:mm:ss ";
+                });
+            });
 
             var raggedBookConfig = new RaggedBookConfig();
             configuration.GetSection("AppSettings").Bind(raggedBookConfig);
@@ -49,7 +54,7 @@ namespace RaggedBooks.Core
                     .GetRequiredService<IOptions<AzureOpenAiSettings>>()
                     .Value;
                 var kernelBuilder = Kernel.CreateBuilder();
-                kernelBuilder.Services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
+                //kernelBuilder.Services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
 
                 if (!raggedBookConfig.UseLocalChatModel)
                 {

@@ -15,28 +15,37 @@ public class VectorSearchService
 {
     private readonly RaggedBookConfig _raggedBookConfig;
     private readonly ILogger<VectorSearchService> _logger;
-    private readonly QDrantApiClient _qdrantClient;
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
 
-    private readonly QdrantVectorStore _vectorStore;
+    private readonly IVectorStoreRecordCollection<ulong, ContentChunk> _collection;
 
     public VectorSearchService(
         Kernel kernel,
         RaggedBookConfig raggedBookConfig,
-        ILogger<VectorSearchService> logger,
-        QDrantApiClient qdrantClient
+        ILogger<VectorSearchService> logger
     )
     {
         _raggedBookConfig = raggedBookConfig;
         _logger = logger;
-        _qdrantClient = qdrantClient;
         _textEmbeddingGenerationService =
             kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-        _vectorStore = new QdrantVectorStore(
-            new QdrantClient(_raggedBookConfig.QdrantUrl.Host, 6334)
+
+        // note that we are skipping the portnumber as grpc port defaultss to 6334
+        var vectorStore = new QdrantVectorStore(new QdrantClient(_raggedBookConfig.QdrantUrl.Host));
+        var vectorStoreRecordDefinition = SetupVectorStoreRecordDefinition();
+
+        _collection = vectorStore.GetCollection<ulong, ContentChunk>(
+            _raggedBookConfig.VectorCollectionname,
+            vectorStoreRecordDefinition
         );
     }
 
+    /// <summary>
+    /// Setup the vector store record definition
+    /// In our case we need to provide the Dimensions for the ContentEmbedding property at runtime,
+    /// so we cannot use the attribute based approach.
+    /// </summary>
+    /// <returns></returns>
     private VectorStoreRecordDefinition SetupVectorStoreRecordDefinition()
     {
         var vectorStoreRecordDefinition = new VectorStoreRecordDefinition()
@@ -62,20 +71,22 @@ public class VectorSearchService
                 },
             },
         };
+
         return vectorStoreRecordDefinition;
     }
 
+    /// <summary>
+    /// Delete the collection from the vectorstore
+    /// </summary>
+    /// <returns></returns>
     public async Task ClearCollection()
     {
-        // this does not work with qdrant
         var collection = await GetCollection();
         await collection.DeleteCollectionAsync();
-        //await _qdrantClient.DeleteCollection("skontent");
     }
 
     public async Task UpsertItems(ContentChunk[] items)
     {
-        Console.WriteLine($"Upserting {items.Length} items to Qdrant");
         var collection = await GetCollection();
         var sw = Stopwatch.StartNew();
         var keys = new List<ulong>();
@@ -83,19 +94,17 @@ public class VectorSearchService
         {
             keys.Add(key);
         }
-        Console.WriteLine($"Added {keys.Count} records to Qdrant in {sw.ElapsedMilliseconds}ms");
+
+        _logger.LogInformation(
+            "Added {RecordCount} records to Qdrant in {ElapsedMs}ms",
+            keys.Count,
+            sw.ElapsedMilliseconds
+        );
     }
 
     public async Task<IVectorStoreRecordCollection<ulong, ContentChunk>> GetCollection()
     {
         _logger.LogInformation("Creating collection if not exists");
-        // Choose a collection from the database and specify the type of key and record stored in it via Generic parameters.
-        var vectorStoreRecordDefinition = SetupVectorStoreRecordDefinition();
-
-        var _collection = _vectorStore.GetCollection<ulong, ContentChunk>(
-            "skcontent",
-            vectorStoreRecordDefinition
-        );
 
         await _collection.CreateCollectionIfNotExistsAsync();
 

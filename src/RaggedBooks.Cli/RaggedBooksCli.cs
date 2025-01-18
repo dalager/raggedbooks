@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
 using RaggedBooks.Core.Chat;
 using RaggedBooks.Core.SemanticSearch;
@@ -12,12 +11,10 @@ public class RaggedBooksCli(
     FileImportService fileImportService,
     VectorSearchService vectorSearchService,
     ChatService chatService,
-    IOptions<RaggedBookConfig> raggedBookConfig,
+    RaggedBookConfig raggedBookConfig,
     ILogger<RaggedBooksCli> logger
 )
 {
-    private readonly RaggedBookConfig _raggedBookConfig = raggedBookConfig.Value;
-
     public async Task Run(string[] args)
     {
         if (args.Length == 0)
@@ -59,46 +56,47 @@ public class RaggedBooksCli(
         {
             var contexts = searchResults.Select(x => x.Record.Content).ToArray();
             var books = searchResults.Select(x => x.Record.Book).Distinct().ToArray();
-            Console.WriteLine(
-                $"Asking ChatCompletionModel with {resultcount} contexts. from these {books.Length} books:"
+            logger.LogInformation(
+                "Asking {Model} with {Resultcount} contexts. from these {BookCount} books:",
+                raggedBookConfig.ChatCompletionModel,
+                resultcount,
+                books.Length
             );
             foreach (var book in books)
             {
-                Console.WriteLine($" - {book}");
+                logger.LogInformation(" - {Book}", book);
             }
 
             var response = await chatService.AskRaggedQuestion(query, contexts.ToArray());
 
-            Console.WriteLine("--------- Answer -------------");
-            Console.WriteLine(response);
+            logger.LogInformation("--------- Answer -------------");
+            logger.LogInformation(response);
         }
         else
         {
             var result = searchResults[0];
             bool showcontent = args.Contains("-content", StringComparer.InvariantCultureIgnoreCase);
 
-            Console.WriteLine($"Search score: {result.Score}");
-            Console.WriteLine($"Key: {result.Record.Id}");
-            Console.WriteLine($"Book: {result.Record.Book}");
-            Console.WriteLine($"Chapter: {result.Record.Chapter}");
-            Console.WriteLine($"Page: {result.Record.PageNumber}");
+            logger.LogInformation("Search score: {Score}", result.Score);
+            logger.LogInformation("Key: {Id}", result.Record.Id);
+            logger.LogInformation("Book: {Book}", result.Record.Book);
+            logger.LogInformation("Chapter: {Chapter}", result.Record.Chapter);
+            logger.LogInformation("Page: {PageNumber}", result.Record.PageNumber);
             if (showcontent)
             {
-                Console.WriteLine($"Content: \n{result.Record.Content}");
+                logger.LogInformation("Content: \n{Content}", result.Record.Content);
             }
 
-            var bookfolder = _raggedBookConfig.PdfFolder;
+            var bookfolder = raggedBookConfig.PdfFolder;
             var fileLink =
                 $"file://{bookfolder}{result.Record.BookFilename}#page={result.Record.PageNumber}";
 
             // url encode the file link
             fileLink = fileLink.Replace(" ", "%20");
-            Console.WriteLine(fileLink);
-            Console.WriteLine("=========");
-            Console.WriteLine();
             if (args.Contains("-open"))
             {
-                Process.Start(_raggedBookConfig.ChromeExePath, fileLink);
+                logger.LogInformation("Opening {FileLink}", fileLink);
+                Process.Start(raggedBookConfig.ChromeExePath, fileLink);
             }
         }
     }

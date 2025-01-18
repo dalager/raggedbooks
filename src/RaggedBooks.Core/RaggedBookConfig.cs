@@ -25,6 +25,12 @@ public class RaggedBookConfig
     public int EmbeddingDimensions { get; set; } = 1024;
 
     /// <summary>
+    /// Collection name in Vectordatabase
+    /// Default value is bookcontent
+    /// </summary>
+    public string VectorCollectionname { get; set; } = "bookcontent";
+
+    /// <summary>
     /// Used for tuning the textextraction process.
     /// </summary>
     public int MaxTokensPerLine { get; set; } = 300;
