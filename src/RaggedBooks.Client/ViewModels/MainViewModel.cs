@@ -98,6 +98,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
     private async Task ExecuteSearchAsync()
     {
         _logger.LogInformation("Executing search");
+        var stopwatch = Stopwatch.StartNew();
         try
         {
             StatusText = "Semantic search...";
@@ -110,27 +111,33 @@ public class MainViewModel : ObservableObject, IMainViewModel
             foreach (var record in matchingRecords)
             {
                 var text =
-                    $@"""
-                Chapter: {record.Chapter}
-                Book: {record.Book}
-                Text: {record.Content}
-                """;
+                    $"{record.Content}{Environment.NewLine}(source: {record.Book} - {record.Chapter})";
 
-                contexts.Add(text);
+                contexts.Add(text.Trim());
             }
+            var usedModel = _raggedConfig.UseLocalChatModel
+                ? _raggedConfig.ChatCompletionModel + " (local)"
+                : "gpt-4o";
 
-            StatusText = "Asking LLM...";
+            StatusText = $"Asking {usedModel}...";
+
             var response = await _chatService.AskRaggedQuestion(Query, contexts.ToArray());
+
             SearchResults = response;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error executing search");
-            SearchResults = "Error executing search";
+            SearchResults = $"""
+                **Error executing search**:
+                 
+                 {ex.Message}
+                
+                """;
         }
         finally
         {
-            StatusText = DefaultStatusText;
+            StatusText = $"Completed in {Math.Round(stopwatch.Elapsed.TotalSeconds, 2)}s";
         }
 
         // Do something with the results

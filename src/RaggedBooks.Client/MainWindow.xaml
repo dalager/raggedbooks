@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:client="clr-namespace:RaggedBooks.Client"
         xmlns:mdxam="clr-namespace:MdXaml;assembly=MdXaml"
-        Title="Ragged Books" Height="350" Width="525">
+        Title="Ragged Books" Height="600" Width="700">
     <Window.Resources>
         <client:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </Window.Resources>
@@ -35,7 +35,7 @@
                                     Markdown="{Binding SearchResults}"/>
         <StatusBar Grid.Row="4" Grid.ColumnSpan="3" Grid.Column="0">
             <StatusBarItem HorizontalAlignment="Left"><TextBlock HorizontalAlignment="Right" Text="{Binding StatusText}" Margin="2"/></StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right"><TextBlock HorizontalAlignment="Right" Margin="2">Ragged Books, Christian Dalager 2025</TextBlock></StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right"><TextBlock HorizontalAlignment="Right" Margin="2">Ragged Books 2025</TextBlock></StatusBarItem>
         </StatusBar>
     </Grid>
 </Window>
