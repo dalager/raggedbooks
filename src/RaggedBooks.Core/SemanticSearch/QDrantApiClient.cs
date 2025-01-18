@@ -32,6 +32,14 @@ public class QDrantApiClient
         return booksDictionary;
     }
 
+    public async Task DeleteCollection(string collectionName)
+    {
+        var httpClient = new HttpClient();
+        httpClient.BaseAddress = _config.QdrantUrl;
+        var response = await httpClient.DeleteAsync("/collections/skcontent");
+        response.EnsureSuccessStatusCode();
+    }
+
     public record FacetResponse(FacetResult Result);
 
     public record FacetResult(string Status, int Time, FacetHit[] Hits);

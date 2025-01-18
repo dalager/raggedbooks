@@ -59,13 +59,17 @@ It will
 - Create embeddings vectors for chunked data with Ollama
 - Store the chunks with embeddings in the QDrant vector store
 
+Adding the `-delete` flag to the command will delete the existing books from the QDrant store before importing the new ones.
+
+````powershell
+
 ### Searching books
 
 To search books, run the following command:
 
 ```powershell
 dotnet run search "what is an ADR?"
-```
+````
 
 It will give you the first result with the book title and the chapter and page where the search query was found.
 

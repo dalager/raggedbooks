@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
 using Microsoft.SemanticKernel.Embeddings;
 using Qdrant.Client;
+#pragma warning disable S125
 
 #pragma warning disable SKEXP0001
 
@@ -12,23 +13,32 @@ namespace RaggedBooks.Core.SemanticSearch;
 
 public class VectorSearchService
 {
+    private readonly RaggedBookConfig _raggedBookConfig;
     private readonly ILogger<VectorSearchService> _logger;
+    private readonly QDrantApiClient _qdrantClient;
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
-    private readonly IVectorStoreRecordCollection<ulong, ContentChunk> _collection;
+
     private readonly QdrantVectorStore _vectorStore;
 
     public VectorSearchService(
         Kernel kernel,
         RaggedBookConfig raggedBookConfig,
-        ILogger<VectorSearchService> logger
+        ILogger<VectorSearchService> logger,
+        QDrantApiClient qdrantClient
     )
     {
+        _raggedBookConfig = raggedBookConfig;
         _logger = logger;
+        _qdrantClient = qdrantClient;
         _textEmbeddingGenerationService =
             kernel.GetRequiredService<ITextEmbeddingGenerationService>();
-        // Create a Qdrant VectorStore object
-        _vectorStore = new QdrantVectorStore(new QdrantClient(raggedBookConfig.QdrantUrl));
+        _vectorStore = new QdrantVectorStore(
+            new QdrantClient(_raggedBookConfig.QdrantUrl.Host, 6334)
+        );
+    }
 
+    private VectorStoreRecordDefinition SetupVectorStoreRecordDefinition()
+    {
         var vectorStoreRecordDefinition = new VectorStoreRecordDefinition()
         {
             Properties = new List<VectorStoreRecordProperty>()
@@ -48,14 +58,19 @@ public class VectorSearchService
                     typeof(ReadOnlyMemory<float>)
                 )
                 {
-                    Dimensions = raggedBookConfig.EmbeddingDimensions,
+                    Dimensions = _raggedBookConfig.EmbeddingDimensions,
                 },
             },
         };
-        _collection = _vectorStore.GetCollection<ulong, ContentChunk>(
-            "skcontent",
-            vectorStoreRecordDefinition
-        );
+        return vectorStoreRecordDefinition;
+    }
+
+    public async Task ClearCollection()
+    {
+        // this does not work with qdrant
+        var collection = await GetCollection();
+        await collection.DeleteCollectionAsync();
+        //await _qdrantClient.DeleteCollection("skontent");
     }
 
     public async Task UpsertItems(ContentChunk[] items)
@@ -75,6 +90,13 @@ public class VectorSearchService
     {
         _logger.LogInformation("Creating collection if not exists");
         // Choose a collection from the database and specify the type of key and record stored in it via Generic parameters.
+        var vectorStoreRecordDefinition = SetupVectorStoreRecordDefinition();
+
+        var _collection = _vectorStore.GetCollection<ulong, ContentChunk>(
+            "skcontent",
+            vectorStoreRecordDefinition
+        );
+
         await _collection.CreateCollectionIfNotExistsAsync();
 
         return _collection;

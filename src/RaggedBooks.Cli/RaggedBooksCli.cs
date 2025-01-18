@@ -34,7 +34,7 @@ public class RaggedBooksCli(
         if (args[0] == "import-file")
             await fileImportService.ImportFileAndCreateEmbeddings(args);
         else if (args[0] == "import-folder")
-            await fileImportService.ImportFileAndCreateEmbeddingsInFolder(args);
+            await fileImportService.ImportFolder(args);
         else if (args[0] == "search")
             await PerformSearch(args);
         else

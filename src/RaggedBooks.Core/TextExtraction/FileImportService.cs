@@ -32,7 +32,7 @@ public class FileImportService
         _config = config.Value;
     }
 
-    public async Task ImportFileAndCreateEmbeddingsInFolder(string[] args)
+    public async Task ImportFolder(string[] args)
     {
         var folder = args[1];
         if (!Directory.Exists(folder))
@@ -40,6 +40,26 @@ public class FileImportService
             Console.WriteLine($"Folder {folder} does not exist");
             return;
         }
+
+        if (
+            args.Length > 2
+            && args[2].Equals("-delete", StringComparison.InvariantCultureIgnoreCase)
+        )
+        {
+            Console.Write("Vil du virkelig slette eksisterende embeddings? Tryk Y for YEAH!");
+            var consoleKeyInfo = Console.ReadKey();
+            if (consoleKeyInfo.Key != ConsoleKey.Y)
+            {
+                Console.WriteLine(Environment.NewLine + "Sletning af embeddings afbrudt");
+                return;
+            }
+            else
+            {
+                Console.WriteLine(Environment.NewLine + "Sletter embeddings...");
+                await _vectorSearchService.ClearCollection();
+            }
+        }
+
         var files = Directory.GetFiles(folder, "*.pdf");
         foreach (var file in files)
         {
