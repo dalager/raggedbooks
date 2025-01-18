@@ -9,7 +9,7 @@ using Qdrant.Client;
 
 #pragma warning disable SKEXP0001
 
-namespace RaggedBooks.Core;
+namespace RaggedBooks.Core.SemanticSearch;
 
 public class VectorSearchService
 {

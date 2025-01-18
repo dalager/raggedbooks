@@ -1,4 +1,4 @@
-﻿using RaggedBooks.Core;
+﻿using RaggedBooks.Core.TextExtraction;
 
 namespace RaggedBooks.Tests;
 

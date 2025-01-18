@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
+using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.SemanticSearch;
 
 namespace RaggedBooks.Client.ViewModels;
 

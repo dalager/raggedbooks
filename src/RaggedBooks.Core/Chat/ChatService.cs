@@ -4,7 +4,7 @@ using Microsoft.SemanticKernel.ChatCompletion;
 
 #pragma warning disable SKEXP0050
 
-namespace RaggedBooks.Core;
+namespace RaggedBooks.Core.Chat;
 
 #pragma warning disable SKEXP0001
 

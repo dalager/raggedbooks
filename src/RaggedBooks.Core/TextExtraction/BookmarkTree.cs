@@ -1,4 +1,4 @@
-namespace RaggedBooks.Core;
+namespace RaggedBooks.Core.TextExtraction;
 
 /// <summary>
 /// Represents a tree of bookmarks for a PDF document.

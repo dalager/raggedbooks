@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
+using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.SemanticSearch;
+using RaggedBooks.Core.TextExtraction;
 using Serilog;
 
 #pragma warning disable SKEXP0070
@@ -18,7 +21,7 @@ namespace RaggedBooks.Core
                 .WriteTo.Console()
                 .Enrich.FromLogContext()
                 .WriteTo.File(
-                    "log.txt",
+                    "raggedbooks_log.log",
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}"
                 )
                 .CreateLogger();
@@ -35,7 +38,7 @@ namespace RaggedBooks.Core
             services.AddSingleton<ChatService>();
             services.AddSingleton<VectorSearchService>();
             services.AddSingleton<FileImportService>();
-            services.AddTransient<Kernel>(serviceProvider =>
+            services.AddSingleton<Kernel>(serviceProvider =>
             {
                 var azureOpenAiSettings = serviceProvider
                     .GetRequiredService<IOptions<AzureOpenAiSettings>>()
@@ -66,6 +69,7 @@ namespace RaggedBooks.Core
                     raggedBookConfig.OllamaUrl
                 );
                 var kernel = kernelBuilder.Build();
+
                 return kernel;
             });
 

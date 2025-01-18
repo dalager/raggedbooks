@@ -1,4 +1,4 @@
-namespace RaggedBooks.Core;
+namespace RaggedBooks.Core.SemanticSearch;
 
 /// <summary>
 /// Chunk stored in vector database.

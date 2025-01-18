@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RaggedBooks.Core;
+using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.SemanticSearch;
+using RaggedBooks.Core.TextExtraction;
 
 namespace RaggedBooks.Cli;
 

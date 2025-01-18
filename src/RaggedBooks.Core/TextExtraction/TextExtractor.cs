@@ -2,7 +2,7 @@ using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 using UglyToad.PdfPig.Outline;
 
-namespace RaggedBooks.Core;
+namespace RaggedBooks.Core.TextExtraction;
 
 public static class TextExtractor
 {
