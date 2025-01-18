@@ -26,12 +26,17 @@ docker compose up -d
 
 ### Loading the Embedding and ChatCompletion models
 
-You will need to import an embedding model into ollama - the project defaults to `mxbai-embed-large`.
-You can do this by executing the following command in the ollama container:
+The project uses two models, one for embeddings and one for chat completion.
+
+When starting the Windows application, the configured models will be pulled in the background, but you can also do this manually:
+
+At the moment the configuration defaults to running both models locally and using the [`mxbai-embed-large`](https://ollama.com/library/mxbai-embed-large) and [`qwen2:0.5b`](https://ollama.com/library/qwen2:0.5b) models.
+
+This strikes a balance between speed and quality, but you can change the models in the `Appsettings.json` file.
 
 ```powershell
 docker compose exec ollama sh -c 'ollama pull mxbai-embed-large'
-docker compose exec ollama sh -c 'ollama pull granite3.1-moe:1b'
+docker compose exec ollama sh -c 'ollama pull qwen2:0.5b'
 ```
 
 If you want to use different models, you can change the `EmbeddingModel` in the `Appsettings.json` file -- note that if you change your embedding model you will have to re-import the books to get the correct embeddings and change the vector dimension in the Appsettings as well, as they differ from model to model.

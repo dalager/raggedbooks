@@ -27,6 +27,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
         VectorSearchService vectorSearchService,
         ChatService chatService,
         RaggedBookConfig raggedConfigOptions,
+        OllamaModelManager ollamaManager,
         ILogger<MainViewModel> logger
     )
     {
@@ -34,6 +35,7 @@ public class MainViewModel : ObservableObject, IMainViewModel
         _chatService = chatService;
         _logger = logger;
         _raggedConfig = raggedConfigOptions;
+        _ollamaManager = ollamaManager;
     }
 
     public ICommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
@@ -41,6 +43,62 @@ public class MainViewModel : ObservableObject, IMainViewModel
 
     // Command that triggers focus
     public ICommand FocusTextCommand => _focusTextCommand ??= new AsyncRelayCommand(FocusText);
+    private readonly OllamaModelManager _ollamaManager;
+    private bool _isLoading;
+    private int _progress; // or double if you prefer
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            if (_isLoading != value)
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+    }
+
+    public int Progress
+    {
+        get => _progress;
+        set
+        {
+            if (_progress != value)
+            {
+                _progress = value;
+                OnPropertyChanged(nameof(Progress));
+            }
+        }
+    }
+
+    public async Task LoadModelsAsync()
+    {
+        IsLoading = true;
+
+        StatusText = "Pulling required models...";
+        try
+        {
+            // For illustration, pretend we have multiple steps.
+            // We can periodically update Progress here, but that requires a thread-safe call to OnPropertyChanged.
+            await _ollamaManager.PullRequiredModels();
+            //progressValue =>
+            //{
+            // // update progress
+            // // to avoid cross-thread issues, capture it in a local var, then use Dispatcher
+            // Application.Current.Dispatcher.Invoke(() =>
+            // {
+            //  Progress = progressValue;
+            // });
+            //});
+        }
+        finally
+        {
+            StatusText = "Ready 😊";
+            IsLoading = false;
+        }
+    }
 
     private async Task ExecuteLookupAsync()
     {

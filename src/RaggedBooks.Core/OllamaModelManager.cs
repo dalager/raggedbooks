@@ -20,6 +20,30 @@ public class OllamaModelManager
         _logger = logger;
     }
 
+    public async Task PullRequiredModels()
+    {
+        var loadedModels = await GetModels();
+        if (!string.IsNullOrWhiteSpace(_config.EmbeddingModel))
+        {
+            _logger.LogInformation("Pulling embedding model into ollama");
+            if (!loadedModels.Contains(_config.EmbeddingModel))
+            {
+                await PullModel(_config.EmbeddingModel);
+            }
+        }
+
+        if (_config.UseLocalChatModel)
+        {
+            _logger.LogInformation("Pulling chatcompletionmodel into ollama");
+
+            if (!loadedModels.Contains(_config.ChatCompletionModel))
+            {
+                await PullModel(_config.ChatCompletionModel);
+            }
+            await PullModel(_config.ChatCompletionModel);
+        }
+    }
+
     public async Task PullModel(string modelId)
     {
         try
