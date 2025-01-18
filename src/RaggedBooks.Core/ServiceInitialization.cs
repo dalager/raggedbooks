@@ -32,12 +32,16 @@ namespace RaggedBooks.Core
             var raggedBookConfig = new RaggedBookConfig();
             configuration.GetSection("AppSettings").Bind(raggedBookConfig);
             raggedBookConfig.ValidateConfiguration();
-
             services.AddSingleton(raggedBookConfig);
+
             services.AddSingleton<OllamaModelManager>();
-            services.AddQdrantVectorStore();
             services.AddSingleton<ChatService>();
+
+            // vector store and api
+            services.AddQdrantVectorStore();
             services.AddSingleton<VectorSearchService>();
+            services.AddSingleton<QDrantApiClient>();
+
             services.AddSingleton<FileImportService>();
             services.AddSingleton<Kernel>(serviceProvider =>
             {

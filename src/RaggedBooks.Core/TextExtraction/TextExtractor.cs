@@ -46,7 +46,6 @@ public static class TextExtractor
         using var pdfDocument = PdfDocument.Open(stream);
 
         // get the title of the book
-
         foreach (var page in pdfDocument.GetPages().Where(x => x is not null))
         {
             var pageContent = ContentOrderTextExtractor.GetText(page) ?? string.Empty;

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
@@ -16,10 +15,11 @@ public class VectorSearchService
     private readonly ILogger<VectorSearchService> _logger;
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
     private readonly IVectorStoreRecordCollection<ulong, ContentChunk> _collection;
+    private readonly QdrantVectorStore _vectorStore;
 
     public VectorSearchService(
         Kernel kernel,
-        IOptions<RaggedBookConfig> raggedBookConfig,
+        RaggedBookConfig raggedBookConfig,
         ILogger<VectorSearchService> logger
     )
     {
@@ -27,15 +27,18 @@ public class VectorSearchService
         _textEmbeddingGenerationService =
             kernel.GetRequiredService<ITextEmbeddingGenerationService>();
         // Create a Qdrant VectorStore object
-        var vectorStore = new QdrantVectorStore(new QdrantClient("localhost"));
+        _vectorStore = new QdrantVectorStore(new QdrantClient(raggedBookConfig.QdrantUrl));
 
         var vectorStoreRecordDefinition = new VectorStoreRecordDefinition()
         {
             Properties = new List<VectorStoreRecordProperty>()
             {
                 new VectorStoreRecordKeyProperty("Id", typeof(Guid)),
-                new VectorStoreRecordDataProperty("Book", typeof(string)),
-                new VectorStoreRecordDataProperty("BookFilename", typeof(string)),
+                new VectorStoreRecordDataProperty("Book", typeof(string)) { IsFilterable = true },
+                new VectorStoreRecordDataProperty("BookFilename", typeof(string))
+                {
+                    IsFilterable = true,
+                },
                 new VectorStoreRecordDataProperty("Chapter", typeof(string)),
                 new VectorStoreRecordDataProperty("PageNumber", typeof(int)),
                 new VectorStoreRecordDataProperty("Index", typeof(int)),
@@ -45,11 +48,11 @@ public class VectorSearchService
                     typeof(ReadOnlyMemory<float>)
                 )
                 {
-                    Dimensions = raggedBookConfig.Value.EmbeddingDimensions,
+                    Dimensions = raggedBookConfig.EmbeddingDimensions,
                 },
             },
         };
-        _collection = vectorStore.GetCollection<ulong, ContentChunk>(
+        _collection = _vectorStore.GetCollection<ulong, ContentChunk>(
             "skcontent",
             vectorStoreRecordDefinition
         );

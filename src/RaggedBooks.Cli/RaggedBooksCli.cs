@@ -20,7 +20,6 @@ public class RaggedBooksCli(
 
     public async Task Run(string[] args)
     {
-        logger.LogInformation("Hej");
         if (args.Length == 0)
         {
             Console.WriteLine(
@@ -44,6 +43,7 @@ public class RaggedBooksCli(
 
     private async Task PerformSearch(string[] args)
     {
+        logger.LogInformation("Performing search");
         var query = args[1];
         var resultcount = 5;
 

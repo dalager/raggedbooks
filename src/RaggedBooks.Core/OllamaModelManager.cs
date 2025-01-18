@@ -20,12 +20,13 @@ public class OllamaModelManager
         _logger = logger;
     }
 
-    public async Task PullRequiredModels()
+    public async Task PullRequiredModels(Action<string> updateStatus)
     {
         var loadedModels = await GetModels();
         if (!string.IsNullOrWhiteSpace(_config.EmbeddingModel))
         {
             _logger.LogInformation("Pulling embedding model into ollama");
+            updateStatus(_config.EmbeddingModel);
             if (!loadedModels.Contains(_config.EmbeddingModel))
             {
                 await PullModel(_config.EmbeddingModel);
@@ -35,7 +36,7 @@ public class OllamaModelManager
         if (_config.UseLocalChatModel)
         {
             _logger.LogInformation("Pulling chatcompletionmodel into ollama");
-
+            updateStatus(_config.ChatCompletionModel);
             if (!loadedModels.Contains(_config.ChatCompletionModel))
             {
                 await PullModel(_config.ChatCompletionModel);

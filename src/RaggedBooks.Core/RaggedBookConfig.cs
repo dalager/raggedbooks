@@ -3,9 +3,14 @@
 public class RaggedBookConfig
 {
     /// <summary>
-    /// The URL of the Ollama service to use for vector search.
+    /// The URL of the Ollama server
     /// </summary>
     public Uri OllamaUrl { get; set; } = null!;
+
+    /// <summary>
+    /// The URL of the Qdrant service to use for vector search.
+    /// </summary>
+    public Uri QdrantUrl { get; set; } = null!;
 
     /// <summary>
     /// The embedding model to use for the vector search.

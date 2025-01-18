@@ -82,7 +82,12 @@ public class MainViewModel : ObservableObject, IMainViewModel
         {
             // For illustration, pretend we have multiple steps.
             // We can periodically update Progress here, but that requires a thread-safe call to OnPropertyChanged.
-            await _ollamaManager.PullRequiredModels();
+            await _ollamaManager.PullRequiredModels(
+                (pullingModelName) =>
+                {
+                    StatusText = "Loading " + pullingModelName;
+                }
+            );
             //progressValue =>
             //{
             // // update progress

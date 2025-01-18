@@ -82,6 +82,9 @@ public class FileImportService
                 _config.OverlapTokens
             );
 
+            // cleanup linebreaks in paragraphs
+            paragraphs = paragraphs.Select(x => x.Replace("-\n", " ")).ToList();
+
             var embeddings = await _textEmbeddingGenerationService.GenerateEmbeddingsAsync(
                 paragraphs
             );

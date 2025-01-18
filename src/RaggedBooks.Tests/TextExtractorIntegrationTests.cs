@@ -1,4 +1,6 @@
-﻿using RaggedBooks.Core.TextExtraction;
+﻿using RaggedBooks.Core;
+using RaggedBooks.Core.SemanticSearch;
+using RaggedBooks.Core.TextExtraction;
 
 namespace RaggedBooks.Tests;
 
@@ -16,5 +18,19 @@ public class TextExtractorIntegrationTests
         Assert.That(book, Is.Not.Null);
         Assert.That(book.Title, Is.EqualTo("Software Architecture: The Hard Parts"));
         Assert.That(book.Pages.Count, Is.GreaterThanOrEqualTo(199));
+    }
+}
+
+public class VectorSearchServiceTests
+{
+    [Test]
+    public async Task TestGetBooks()
+    {
+        var svc = new QDrantApiClient(
+            new RaggedBookConfig() { QdrantUrl = new Uri("http://localhost:6333") }
+        );
+
+        var books = await svc.GetBooks();
+        Assert.That(books.Keys.Count, Is.GreaterThanOrEqualTo(1));
     }
 }
