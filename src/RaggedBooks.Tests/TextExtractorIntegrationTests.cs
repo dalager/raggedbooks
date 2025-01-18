@@ -2,7 +2,7 @@
 
 namespace RaggedBooks.Tests;
 
-public class Tests
+public class TextExtractorIntegrationTests
 {
     [Test]
     public async Task Test1()
@@ -12,15 +12,9 @@ public class Tests
         var stream = File.OpenRead(file);
         var chaps = await TextExtractor.GetChapters(stream);
         Assert.That(chaps, Is.Not.Null);
-
-        var bookmarktree = new BookmarkTree(chaps);
-        var pages = await TextExtractor.GetContentAsync(File.OpenRead(file));
-        Assert.That(pages, Is.Not.Null);
-        foreach (var page in pages)
-        {
-            Console.WriteLine(
-                page.pagenumber + ":" + bookmarktree.GetChapterPath(page.pagenumber, 1)
-            );
-        }
+        var book = await TextExtractor.LoadBook(file);
+        Assert.That(book, Is.Not.Null);
+        Assert.That(book.Title, Is.EqualTo("Software Architecture: The Hard Parts"));
+        Assert.That(book.Pages.Count, Is.GreaterThanOrEqualTo(199));
     }
 }

@@ -34,6 +34,7 @@ namespace RaggedBooks.Core
             raggedBookConfig.ValidateConfiguration();
 
             services.AddSingleton(raggedBookConfig);
+            services.AddSingleton<OllamaModelManager>();
             services.AddQdrantVectorStore();
             services.AddSingleton<ChatService>();
             services.AddSingleton<VectorSearchService>();
