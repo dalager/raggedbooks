@@ -14,8 +14,8 @@ public class MainViewModel : ObservableObject, IMainViewModel
     private readonly VectorSearchService _vectorSearchService;
     private readonly ChatService _chatService;
     private readonly ILogger<MainViewModel> _logger;
-    private ICommand _lookupCommand = null!;
     private ICommand _searchCommand = null!;
+    private ICommand _lookupCommand = null!;
     private ICommand _focusTextCommand = null!;
     private string _query = string.Empty;
     private string _searchResults = string.Empty;

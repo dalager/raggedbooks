@@ -54,7 +54,6 @@ namespace RaggedBooks.Core
                     .GetRequiredService<IOptions<AzureOpenAiSettings>>()
                     .Value;
                 var kernelBuilder = Kernel.CreateBuilder();
-                //kernelBuilder.Services.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace));
 
                 if (!raggedBookConfig.UseLocalChatModel)
                 {
