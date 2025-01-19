@@ -4,24 +4,19 @@ namespace RaggedBooks.MauiClient
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly MainPageViewModel _viewModel;
 
         public MainPage(MainPageViewModel viewModel)
         {
+            _viewModel = viewModel;
             BindingContext = viewModel;
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        protected override void OnNavigatedTo(NavigatedToEventArgs args)
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            base.OnNavigatedTo(args);
+            _ = _viewModel.LoadModelsAsync();
         }
     }
 }
