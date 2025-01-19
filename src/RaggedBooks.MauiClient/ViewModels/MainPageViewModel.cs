@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Markdig;
 using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
 using RaggedBooks.Core.Chat;
@@ -20,7 +21,8 @@ namespace RaggedBooks.MauiClient.ViewModels
         private ICommand _lookupCommand = null!;
         private readonly ICommand _focusTextCommand = null!;
         private string _query = string.Empty;
-        private string _searchResults = string.Empty;
+        private string _searchResults = "<html></html>";
+        private HtmlWebViewSource _webViewSource = new();
         private string _statusText = DefaultStatusText;
         private const string DefaultStatusText = "";
 
@@ -72,6 +74,15 @@ namespace RaggedBooks.MauiClient.ViewModels
             set
             {
                 _searchResults = value;
+                OnPropertyChanged();
+            }
+        }
+        public HtmlWebViewSource HtmlSearchResults
+        {
+            get => _webViewSource;
+            set
+            {
+                _webViewSource = value;
                 OnPropertyChanged();
             }
         }
@@ -144,7 +155,10 @@ namespace RaggedBooks.MauiClient.ViewModels
 
                 var response = await _chatService.AskRaggedQuestion(Query, contexts.ToArray());
 
+                var html = RenderMarkdownToHtml(response);
+
                 SearchResults = response;
+                HtmlSearchResults = new HtmlWebViewSource { Html = html };
             }
             catch (Exception ex)
             {
@@ -162,6 +176,12 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
 
             // Do something with the results
+        }
+
+        private string RenderMarkdownToHtml(string markdown)
+        {
+            var pipeline = new MarkdownPipelineBuilder().Build();
+            return Markdown.ToHtml(markdown, pipeline);
         }
 
         public async Task LoadModelsAsync()
