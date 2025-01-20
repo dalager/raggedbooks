@@ -27,7 +27,7 @@
             <Button Text="Go" Padding="50,0,50,0" Margin="0,5,10,0" Command="{Binding LookupCommand}" Grid.Row="2" Grid.Column="1"/>
             <Button Text="Ask" Padding="50,0,50,0" Margin="0,5,0,0" Command="{Binding SearchCommand}" Grid.Row="2" Grid.Column="2" />
             <!--<Label Text="{Binding SearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" />-->
-            <WebView Source="{Binding HtmlSearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"/>
+            <WebView Source="{Binding HtmlSearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="5,5,5,5" />
 
             <Label Text="{Binding StatusText}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalTextAlignment="Start"/>
         </Grid>
