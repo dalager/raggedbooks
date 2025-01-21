@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Cli", "RaggedBooks.Cli\RaggedBooks.Cli.csproj", "{DACE8467-DB00-4C2F-9FF9-162CB606F448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Client", "RaggedBooks.Client\RaggedBooks.Client.csproj", "{122FAAC1-058D-472C-93F9-66048889CDD3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Core", "RaggedBooks.Core\RaggedBooks.Core.csproj", "{F5EDDE8D-D9FD-43B9-98FA-E34BB366BB78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaggedBooks.Tests", "RaggedBooks.Tests\RaggedBooks.Tests.csproj", "{6CD5A530-D619-4C63-A921-FB51A741F2A1}"
@@ -28,10 +26,6 @@ Global
 		{DACE8467-DB00-4C2F-9FF9-162CB606F448}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DACE8467-DB00-4C2F-9FF9-162CB606F448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DACE8467-DB00-4C2F-9FF9-162CB606F448}.Release|Any CPU.Build.0 = Release|Any CPU
-		{122FAAC1-058D-472C-93F9-66048889CDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{122FAAC1-058D-472C-93F9-66048889CDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{122FAAC1-058D-472C-93F9-66048889CDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{122FAAC1-058D-472C-93F9-66048889CDD3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5EDDE8D-D9FD-43B9-98FA-E34BB366BB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5EDDE8D-D9FD-43B9-98FA-E34BB366BB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5EDDE8D-D9FD-43B9-98FA-E34BB366BB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
