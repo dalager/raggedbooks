@@ -140,9 +140,9 @@ The answer will be printed to the console as markdown.
 
 ## Running the app
 
-The app in the screenshot above is a MAUI app - the current cross platform UI framework from Microsoft.
+The app in the screenshot above is a [.NET MAUI app](https://dotnet.microsoft.com/en-us/apps/maui) - the current cross platform UI framework from Microsoft. It should be possible to run it on Windows and Mac OS, but my current workstation is windows, so I might need some help to get it running on Mac OS.
 
-You can run from within Visual Studio or with the following command:
+You can run from within your IDE or with the following command:
 
 ```powershell
 dotnet run --project .\RaggedBooks.MauiClient\RaggedBooks.MauiClient.csproj --framework net9.0-windows10.0.19041.0
