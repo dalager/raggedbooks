@@ -18,6 +18,15 @@ public static class Program
             .Build();
 
         var serviceCollection = ServiceInitialization.CreateServices(configuration);
+        serviceCollection.AddLogging(l =>
+        {
+            l.AddSimpleConsole(opts =>
+            {
+                opts.SingleLine = true;
+                opts.TimestampFormat = "HH:mm:ss ";
+            });
+        });
+
         serviceCollection.AddSingleton<RaggedBooksCli>();
         serviceCollection.AddLogging(l => l.SetMinimumLevel(LogLevel.Trace).AddConsole());
         var serviceProvider = serviceCollection.BuildServiceProvider();
