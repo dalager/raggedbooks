@@ -21,20 +21,10 @@ namespace RaggedBooks.MauiClient.ViewModels
         private ICommand _lookupCommand = null!;
         private readonly ICommand _focusTextCommand = null!;
         private string _query = string.Empty;
-        private string _searchResults = string.Empty;
         private const string DefaultHtml =
-            "<!DOCTYPE html>"
-            + "<html>"
-            + "<head>"
-            + "<meta charset=\"utf-8\">"
-            + "<link rel=\"stylesheet\" href=\"/MarkDownStyles.css\"/>"
-            + "</head>"
-            + "<body>"
-            + "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
-            + "<li>Click on 'Ask' to use the Chat Completion Model to summarize the matching content.</li></ul>"
-            + "</body>"
-            + "</html>";
-        private HtmlWebViewSource _webViewSource = new() { Html = DefaultHtml };
+            "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
+            + "<li>Click on 'Ask' to use the Chat Completion Model to summarize the matching content.</li></ul>";
+        private HtmlWebViewSource _webViewSource;
         private string _statusText = DefaultStatusText;
         private const string DefaultStatusText = "";
 
@@ -80,24 +70,23 @@ namespace RaggedBooks.MauiClient.ViewModels
                 }
             }
         }
-        public string SearchResults
-        {
-            get => _searchResults;
-            set
-            {
-                _searchResults = value;
-                OnPropertyChanged();
-            }
-        }
         public HtmlWebViewSource HtmlSearchResults
         {
-            get => _webViewSource;
+            get
+            {
+                if (_webViewSource == null)
+                {
+                    _webViewSource = new HtmlWebViewSource { Html = WrapInHtml(DefaultHtml) };
+                }
+                return _webViewSource;
+            }
             set
             {
                 _webViewSource = value;
                 OnPropertyChanged();
             }
         }
+
         public string Query
         {
             get => _query;
@@ -128,7 +117,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
             catch (Exception e)
             {
-                SearchResults = "Error: " + e.Message;
+                DisplayHtmlInWebview(WrapInHtml("Error: " + e.Message));
             }
             finally
             {
@@ -169,30 +158,21 @@ namespace RaggedBooks.MauiClient.ViewModels
 
                 var htmlBody = RenderMarkdownToHtml(response);
 
-                string finalHtml =
-                    "<!DOCTYPE html>"
-                    + "<html>"
-                    + "<head>"
-                    + "<meta charset=\"utf-8\">"
-                    + "<link rel=\"stylesheet\" href=\"/MarkDownStyles.css\"/>"
-                    + "</head>"
-                    + "<body>"
-                    + htmlBody
-                    + "</body>"
-                    + "</html>";
-
-                SearchResults = response;
-                HtmlSearchResults = new HtmlWebViewSource { Html = finalHtml };
+                DisplayHtmlInWebview(WrapInHtml(htmlBody));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error executing search");
-                SearchResults = $"""
-                    **Error executing search**:
-                     
-                     {ex.Message}
-                    
-                    """;
+                DisplayHtmlInWebview(
+                    WrapInHtml(
+                        $"""
+                        **Error executing search**:
+                         
+                         {ex.Message}
+                        
+                        """
+                    )
+                );
             }
             finally
             {
@@ -200,6 +180,27 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
 
             // Do something with the results
+        }
+
+        public void DisplayHtmlInWebview(string html)
+        {
+            HtmlSearchResults = new HtmlWebViewSource { Html = html };
+        }
+
+        public string WrapInHtml(string inputString)
+        {
+            string finalHtml =
+                "<!DOCTYPE html>"
+                + "<html>"
+                + "<head>"
+                + "<meta charset=\"utf-8\">"
+                + "<link rel=\"stylesheet\" href=\"/MarkDownStyles.css\"/>"
+                + "</head>"
+                + "<body>"
+                + inputString
+                + "</body>"
+                + "</html>";
+            return finalHtml;
         }
 
         private string RenderMarkdownToHtml(string markdown)

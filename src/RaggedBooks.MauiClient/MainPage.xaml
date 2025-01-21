@@ -1,35 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RaggedBooks.MauiClient.MainPage">
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="Actions">
+            <MenuFlyoutItem Text="Lookup" Command="{Binding LookupCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="G" Modifiers="Ctrl"></KeyboardAccelerator>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Search" Command="{Binding SearchCommand}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Enter" Modifiers="Ctrl"></KeyboardAccelerator>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
 
-    <ScrollView>
+    <ScrollView Margin="10,10,10,10">
         <Grid Padding="30,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Label
                 Text="Question the books"
-                FontAttributes="Bold"
-                SemanticProperties.Description="Input search query" 
-                Margin="6,0,0,2" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
-            <Entry Placeholder="Ask your question..." Text="{Binding Query}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
-            <Button Text="Go" Padding="50,0,50,0" Margin="0,5,10,0" Command="{Binding LookupCommand}" Grid.Row="2" Grid.Column="1"/>
-            <Button Text="Ask" Padding="50,0,50,0" Margin="0,5,0,0" Command="{Binding SearchCommand}" Grid.Row="2" Grid.Column="2" />
-            <!--<Label Text="{Binding SearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" />-->
-            <WebView Source="{Binding HtmlSearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="5,5,5,5" />
+                FontAttributes="Bold" VerticalTextAlignment="End"
+                SemanticProperties.Description="Input search query"
+                Margin="6,0,0,2" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+            <Label Text="Ragged Books" Grid.Row="0" Grid.Column="2" Style="{StaticResource Headline}" />
+            <Entry Placeholder="Ask your question..." Text="{Binding Query}" Grid.Row="1" Grid.Column="0"
+                   Grid.ColumnSpan="3" />
+            <Button Text="Go" Padding="50,0,50,0" Margin="0,5,10,0" Command="{Binding LookupCommand}" Grid.Row="2"
+                    Grid.Column="1" />
+            <Button Text="Ask" Padding="50,0,50,0" Margin="0,5,0,0" Command="{Binding SearchCommand}" Grid.Row="2"
+                    Grid.Column="2" />
+            <WebView Source="{Binding HtmlSearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+                     Margin="5,5,5,5" />
 
-            <Label Text="{Binding StatusText}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalTextAlignment="Start"/>
+            <Label Text="{Binding StatusText}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                   HorizontalTextAlignment="Start" />
         </Grid>
     </ScrollView>
 </ContentPage>

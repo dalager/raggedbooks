@@ -8,7 +8,7 @@
     Title="RaggedBooks.MauiClient">
 
     <ShellContent
-        Title="Ragged Books"
+        Title="" 
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
