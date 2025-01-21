@@ -138,16 +138,27 @@ This will stitch the content blocks from the 5 best search results together and 
 
 The answer will be printed to the console as markdown.
 
-## The Windows Desktop Application (WPF)
+## Running the app
 
-The WPF application is a simple interface for the search functionality.
+The app in the screenshot above is a MAUI app - the current cross platform UI framework from Microsoft.
+
 You can run from within Visual Studio or with the following command:
 
 ```powershell
-dotnet run --project .\RaggedBooks.Client\RaggedBooks.Client.csproj
+dotnet run --project .\RaggedBooks.MauiClient\RaggedBooks.MauiClient.csproj --framework net9.0-windows10.0.19041.0
 ```
 
-Remember that without the LLM configured in Appsettings, you will not be able to "Ask" questions, just lookup content in the books.
+On Mac OS, it might be possible to run it with this framework:
+
+```bash
+dotnet run --project .\RaggedBooks.MauiClient\RaggedBooks.MauiClient.csproj --framework net9.0-maccatalyst
+```
+
+However it is not tested on Mac OS yet.
+
+On startup the app will prompt Ollama to pull the configured embedding and chat models, if not already present.
+
+It will, however need the docker compose services running.
 
 ## The required services
 
