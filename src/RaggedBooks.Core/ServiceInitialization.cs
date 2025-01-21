@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using RaggedBooks.Core.Chat;
@@ -27,11 +26,6 @@ namespace RaggedBooks.Core
             services.AddLogging(l =>
             {
                 l.AddSerilog(dispose: true);
-                l.AddSimpleConsole(opts =>
-                {
-                    opts.SingleLine = true;
-                    opts.TimestampFormat = "HH:mm:ss ";
-                });
             });
 
             var raggedBookConfig = new RaggedBookConfig();
