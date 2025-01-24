@@ -26,6 +26,13 @@ Ollama and Quadrant must be started in a docker container with the following com
 docker compose up -d
 ```
 
+If NOT running the GUI app, but only the CLI Execute these as well while the containers are running.
+
+```powershell
+docker compose exec ollama sh -c 'ollama pull mxbai-embed-large'
+docker compose exec ollama sh -c 'ollama pull qwen2:0.5b'
+```
+
 ### Loading the Embedding and ChatCompletion models
 
 The project uses two models, one for embeddings and one for chat completion.
@@ -123,6 +130,7 @@ dotnet run search "Should I mock a third party REST api during development?" -op
 It will open the pdf file in Chrome with an appended `#page=123` anchor, which should take you to the correct page.
 
 This last part requires you to have put the Chrome executable path in the `Appsettings.json` file.
+
 
 ### RAG (Retrieval Augmented Generation)
 
