@@ -24,6 +24,13 @@ Ollama and Quadrant must be started in a docker container with the following com
 docker compose up -d
 ```
 
+If NOT running the GUI app, but only the CLI Execute these as well while the containers are running.
+
+```powershell
+docker compose exec ollama sh -c 'ollama pull mxbai-embed-large'
+docker compose exec ollama sh -c 'ollama pull qwen2:0.5b'
+```
+
 ### Loading the Embedding and ChatCompletion models
 
 The project uses two models, one for embeddings and one for chat completion.
@@ -33,11 +40,6 @@ When starting the Windows application, the configured models will be pulled in t
 At the moment the configuration defaults to running both models locally and using the [`mxbai-embed-large`](https://ollama.com/library/mxbai-embed-large) and [`qwen2:0.5b`](https://ollama.com/library/qwen2:0.5b) models.
 
 This strikes a balance between speed and quality, but you can change the models in the `Appsettings.json` file.
-
-```powershell
-docker compose exec ollama sh -c 'ollama pull mxbai-embed-large'
-docker compose exec ollama sh -c 'ollama pull qwen2:0.5b'
-```
 
 If you want to use different models, you can change the `EmbeddingModel` in the `Appsettings.json` file -- note that if you change your embedding model you will have to re-import the books to get the correct embeddings and change the vector dimension in the Appsettings as well, as they differ from model to model.
 
@@ -61,15 +63,13 @@ It will
 
 Adding the `-delete` flag to the command will delete the existing books from the QDrant store before importing the new ones.
 
-````powershell
-
-### Searching books
-
 To search books, run the following command:
 
-```powershell
+``` powershell
+### Searching books
+
 dotnet run search "what is an ADR?"
-````
+```
 
 It will give you the first result with the book title and the chapter and page where the search query was found.
 
@@ -123,6 +123,7 @@ dotnet run search "Should I mock a third party REST api during development?" -op
 It will open the pdf file in Chrome with an appended `#page=123` anchor, which should take you to the correct page.
 
 This last part requires you to have put the Chrome executable path in the `Appsettings.json` file.
+
 
 ### RAG (Retrieval Augmented Generation)
 
