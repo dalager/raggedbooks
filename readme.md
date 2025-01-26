@@ -19,6 +19,7 @@ Other more general tools and RAG frameworks exist that can do this, but this is 
 
 - .NET 9 (for running the CLI and the MAUI app)
 - Docker (for running Ollama and QDrant)
+- [.NET MAUI SDK](https://dotnet.microsoft.com/en-us/apps/maui) (for building the desktop app, install with `dotnet workload install maui-desktop`)
 
 Ollama and Quadrant must be started in a docker container with the following commands:
 
@@ -130,7 +131,6 @@ dotnet run search "Should I mock a third party REST api during development?" -op
 It will open the pdf file in Chrome with an appended `#page=123` anchor, which should take you to the correct page.
 
 This last part requires you to have put the Chrome executable path in the `Appsettings.json` file.
-
 
 ### RAG (Retrieval Augmented Generation)
 
