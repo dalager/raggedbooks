@@ -6,14 +6,9 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/ollama/storage
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  
+    runtime: nvidia 
   qdrant:
     image: qdrant/qdrant
     container_name: ragged-qdrant
