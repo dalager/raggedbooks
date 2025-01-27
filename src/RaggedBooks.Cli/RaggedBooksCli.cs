@@ -28,14 +28,21 @@ public class RaggedBooksCli(
             return;
         }
 
-        if (args[0] == "import-file")
-            await fileImportService.ImportFileAndCreateEmbeddings(args);
-        else if (args[0] == "import-folder")
-            await fileImportService.ImportFolder(args);
-        else if (args[0] == "search")
-            await PerformSearch(args);
-        else
-            Console.WriteLine("Invalid command");
+        switch (args[0])
+        {
+            case "import-file":
+                await fileImportService.ImportFileAndCreateEmbeddings(args);
+                break;
+            case "import-folder":
+                await fileImportService.ImportFolder(args);
+                break;
+            case "search":
+                await PerformSearch(args);
+                break;
+            default:
+                Console.WriteLine("Invalid command");
+                break;
+        }
     }
 
     private async Task PerformSearch(string[] args)
@@ -67,15 +74,15 @@ public class RaggedBooksCli(
                 logger.LogInformation(" - {Book}", book);
             }
 
-            var response = await chatService.AskRaggedQuestion(query, textChunks.ToArray());
+            var response = await chatService.AskRaggedQuestion(query, [.. textChunks]);
 
             logger.LogInformation("--------- Answer -------------");
-            logger.LogInformation(response);
+            logger.LogInformation("{Answer}", response);
         }
         else
         {
             var result = searchResults[0];
-            bool showcontent = args.Contains("-content", StringComparer.InvariantCultureIgnoreCase);
+            var showcontent = args.Contains("-content", StringComparer.InvariantCultureIgnoreCase);
 
             logger.LogInformation("Search score: {Score}", result.Score);
             logger.LogInformation("Key: {Id}", result.Record.Id);

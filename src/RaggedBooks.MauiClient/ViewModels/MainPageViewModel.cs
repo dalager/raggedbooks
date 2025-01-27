@@ -66,6 +66,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             _ollamaManager = ollamaManager;
             _logger = logger;
             _webViewSource = new HtmlWebViewSource() { Html = WrapInHtml(defaultHtml) };
+            _markdownConverter = new MarkdownToHtmlConverter();
         }
 
         public string StatusText
@@ -78,6 +79,8 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
         }
         private bool _isLoading;
+        private readonly MarkdownToHtmlConverter _markdownConverter;
+
         public bool IsLoading
         {
             get => _isLoading;
@@ -167,9 +170,9 @@ namespace RaggedBooks.MauiClient.ViewModels
 
                 StatusText = $"Asking {usedModel}...";
 
-                var response = await _chatService.AskRaggedQuestion(Query, contexts.ToArray());
+                var response = await _chatService.AskRaggedQuestion(Query, [.. contexts]);
 
-                var htmlBody = RenderMarkdownToHtml(response);
+                var htmlBody = _markdownConverter.ConvertToHtml(response);
 
                 DisplayHtmlInWebview(WrapInHtml(htmlBody));
             }
@@ -198,7 +201,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             HtmlSearchResults = new HtmlWebViewSource { Html = html };
         }
 
-        public string WrapInHtml(string inputString)
+        public static string WrapInHtml(string inputString)
         {
             var htmlWrapper =
                 "<!DOCTYPE html>"
@@ -214,12 +217,6 @@ namespace RaggedBooks.MauiClient.ViewModels
             return htmlWrapper;
         }
 
-        private string RenderMarkdownToHtml(string markdown)
-        {
-            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-            return Markdown.ToHtml(markdown, pipeline);
-        }
-
         public async Task LoadModelsAsync()
         {
             IsLoading = true;
@@ -227,29 +224,30 @@ namespace RaggedBooks.MauiClient.ViewModels
             StatusText = "Pulling required models...";
             try
             {
-                // For illustration, pretend we have multiple steps.
-                // We can periodically update Progress here, but that requires a thread-safe call to OnPropertyChanged.
                 await _ollamaManager.PullRequiredModels(
                     (pullingModelName) =>
                     {
                         StatusText = "Loading " + pullingModelName;
                     }
                 );
-                //progressValue =>
-                //{
-                // // update progress
-                // // to avoid cross-thread issues, capture it in a local var, then use Dispatcher
-                // Application.Current.Dispatcher.Invoke(() =>
-                // {
-                //  Progress = progressValue;
-                // });
-                //});
             }
             finally
             {
                 StatusText = "Ready 😊";
                 IsLoading = false;
             }
+        }
+    }
+
+    public class MarkdownToHtmlConverter
+    {
+        private readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
+
+        public string ConvertToHtml(string markdown)
+        {
+            return Markdown.ToHtml(markdown, _pipeline);
         }
     }
 }

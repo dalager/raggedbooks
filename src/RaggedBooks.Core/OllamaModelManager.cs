@@ -10,39 +10,30 @@ namespace RaggedBooks.Core;
 /// This is convenient as it allows the user to
 /// add models to ollama through the configuration file
 /// </summary>
-public class OllamaModelManager
+public class OllamaModelManager(RaggedBookConfig config, ILogger<OllamaModelManager> logger)
 {
-    private readonly RaggedBookConfig _config;
-    private readonly ILogger<OllamaModelManager> _logger;
-
-    public OllamaModelManager(RaggedBookConfig config, ILogger<OllamaModelManager> logger)
-    {
-        _config = config;
-        _logger = logger;
-    }
-
     public async Task PullRequiredModels(Action<string> updateStatus)
     {
         var loadedModels = await GetModels();
-        if (!string.IsNullOrWhiteSpace(_config.EmbeddingModel))
+        if (!string.IsNullOrWhiteSpace(config.EmbeddingModel))
         {
-            _logger.LogInformation("Pulling embedding model into ollama");
-            updateStatus(_config.EmbeddingModel);
-            if (!loadedModels.Contains(_config.EmbeddingModel))
+            logger.LogInformation("Pulling embedding model into ollama");
+            updateStatus(config.EmbeddingModel);
+            if (!loadedModels.Contains(config.EmbeddingModel))
             {
-                await PullModel(_config.EmbeddingModel);
+                await PullModel(config.EmbeddingModel);
             }
         }
 
-        if (_config.UseLocalChatModel)
+        if (config.UseLocalChatModel)
         {
-            _logger.LogInformation("Pulling chatcompletionmodel into ollama");
-            updateStatus(_config.ChatCompletionModel);
-            if (!loadedModels.Contains(_config.ChatCompletionModel))
+            logger.LogInformation("Pulling chatcompletionmodel into ollama");
+            updateStatus(config.ChatCompletionModel);
+            if (!loadedModels.Contains(config.ChatCompletionModel))
             {
-                await PullModel(_config.ChatCompletionModel);
+                await PullModel(config.ChatCompletionModel);
             }
-            await PullModel(_config.ChatCompletionModel);
+            await PullModel(config.ChatCompletionModel);
         }
     }
 
@@ -52,8 +43,8 @@ public class OllamaModelManager
         {
             var httpclient = new HttpClient();
             var payload = new { model = modelId };
-            var requestUri = $"{_config.OllamaUrl}api/pull";
-            _logger.LogInformation(
+            var requestUri = $"{config.OllamaUrl}api/pull";
+            logger.LogInformation(
                 "Pulling model {ModelId} into ollama on {Url}",
                 modelId,
                 requestUri
@@ -63,16 +54,17 @@ public class OllamaModelManager
             var body = await response.Content.ReadAsStringAsync();
 
             // check lines in output for errors
-            var lines = body.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-            foreach (var line in lines)
+            if (body.Contains("\"error\""))
             {
-                if (line.Contains("\"error\""))
+                var lines = body.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                var error = lines.FirstOrDefault(x => x.Contains(@"""error"""));
+                if (error != null)
                 {
-                    throw new OllamaException(line);
+                    throw new OllamaException(error);
                 }
             }
 
-            _logger.LogInformation("Response: {Response}", body);
+            logger.LogInformation("Response: {Response}", body);
 
             response.EnsureSuccessStatusCode();
         }
@@ -86,7 +78,7 @@ public class OllamaModelManager
     {
         var httpclient = new HttpClient();
         var models = await httpclient.GetFromJsonAsync<OllamaTagList>(
-            $"{_config.OllamaUrl}api/tags"
+            $"{config.OllamaUrl}api/tags"
         );
         if (models == null)
         {
@@ -121,8 +113,4 @@ public class OllamaModelManager
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
 
-public class OllamaException : Exception
-{
-    public OllamaException(string message)
-        : base(message) { }
-}
+public class OllamaException(string message) : Exception(message);
