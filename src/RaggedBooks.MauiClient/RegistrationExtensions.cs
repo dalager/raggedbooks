@@ -7,7 +7,7 @@ namespace RaggedBooks.MauiClient
     {
         public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder mauiAppBuilder)
         {
-            mauiAppBuilder.Services.AddSingleton<MainPageViewModel>();
+            mauiAppBuilder.Services.AddSingleton<IMainPageViewModel, MainPageViewModel>();
             return mauiAppBuilder;
         }
 

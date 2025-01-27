@@ -21,6 +21,7 @@ public class ChatService(Kernel kernel)
             You will be given chunks of text from different books to use as context.
             You must answer in the same language of the user's question.
             You will repond in markdown.
+
             """
         );
 
@@ -48,13 +49,7 @@ Answer the following question:
         );
 
         chat.AddUserMessage(prompt.ToString());
-
         var answer = await chatCompletionService.GetChatMessageContentAsync(chat)!;
-
-        // Add question and answer to the chat history.
-#pragma warning disable S125
-        //await SetChatHistoryAsync(conversationId, question, answer.Content!);
-#pragma warning restore S125
 
         return answer.Content!;
     }

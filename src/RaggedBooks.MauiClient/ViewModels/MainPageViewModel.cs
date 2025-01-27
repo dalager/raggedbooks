@@ -11,7 +11,18 @@ using RaggedBooks.Core.SemanticSearch;
 
 namespace RaggedBooks.MauiClient.ViewModels
 {
-    public class MainPageViewModel : ObservableObject
+    public interface IMainPageViewModel
+    {
+        ICommand SearchCommand { get; }
+        ICommand LookupCommand { get; }
+        string Query { get; set; }
+        string StatusText { get; set; }
+        bool IsLoading { get; set; }
+        HtmlWebViewSource HtmlSearchResults { get; set; }
+        Task LoadModelsAsync();
+    }
+
+    public class MainPageViewModel : ObservableObject, IMainPageViewModel
     {
         private readonly VectorSearchService _vectorSearchService;
         private readonly ChatService _chatService;
@@ -20,14 +31,13 @@ namespace RaggedBooks.MauiClient.ViewModels
         private readonly ILogger<MainPageViewModel> _logger;
         private ICommand _searchCommand = null!;
         private ICommand _lookupCommand = null!;
-        private readonly ICommand _focusTextCommand = null!;
         private string _query = string.Empty;
-        private const string DefaultHtml =
+        private const string defaultHtml =
             "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
             + "<li>Click on 'Ask' to use the Chat Completion Model to summarize the matching content.</li></ul>";
         private HtmlWebViewSource _webViewSource;
-        private string _statusText = DefaultStatusText;
-        private const string DefaultStatusText = "";
+        private string _statusText = defaultStatusText;
+        private const string defaultStatusText = "";
 
         public ICommand SearchCommand =>
             _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
@@ -47,6 +57,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             _raggedConfig = raggedConfig;
             _ollamaManager = ollamaManager;
             _logger = logger;
+            _webViewSource = new HtmlWebViewSource() { Html = WrapInHtml(defaultHtml) };
         }
 
         public string StatusText
@@ -73,14 +84,7 @@ namespace RaggedBooks.MauiClient.ViewModels
         }
         public HtmlWebViewSource HtmlSearchResults
         {
-            get
-            {
-                if (_webViewSource == null)
-                {
-                    _webViewSource = new HtmlWebViewSource { Html = WrapInHtml(DefaultHtml) };
-                }
-                return _webViewSource;
-            }
+            get => _webViewSource;
             set
             {
                 _webViewSource = value;
@@ -122,7 +126,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
             finally
             {
-                StatusText = DefaultStatusText;
+                StatusText = defaultStatusText;
             }
         }
 
@@ -179,8 +183,6 @@ namespace RaggedBooks.MauiClient.ViewModels
             {
                 StatusText = $"Completed in {Math.Round(stopwatch.Elapsed.TotalSeconds, 2)}s";
             }
-
-            // Do something with the results
         }
 
         public void DisplayHtmlInWebview(string html)
@@ -190,7 +192,7 @@ namespace RaggedBooks.MauiClient.ViewModels
 
         public string WrapInHtml(string inputString)
         {
-            string finalHtml =
+            var htmlWrapper =
                 "<!DOCTYPE html>"
                 + "<html>"
                 + "<head>"
@@ -201,7 +203,7 @@ namespace RaggedBooks.MauiClient.ViewModels
                 + inputString
                 + "</body>"
                 + "</html>";
-            return finalHtml;
+            return htmlWrapper;
         }
 
         private string RenderMarkdownToHtml(string markdown)

@@ -4,9 +4,9 @@ namespace RaggedBooks.MauiClient
 {
     public partial class MainPage : ContentPage
     {
-        private readonly MainPageViewModel _viewModel;
+        private readonly IMainPageViewModel _viewModel;
 
-        public MainPage(MainPageViewModel viewModel)
+        public MainPage(IMainPageViewModel viewModel)
         {
             _viewModel = viewModel;
             BindingContext = viewModel;
