@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
+using RaggedBooks.Core.Configuration;
 
 namespace RaggedBooks.Core;
 

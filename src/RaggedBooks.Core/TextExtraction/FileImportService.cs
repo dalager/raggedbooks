@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.Text;
+using RaggedBooks.Core.Configuration;
 using RaggedBooks.Core.SemanticSearch;
 
 #pragma warning disable SKEXP0050

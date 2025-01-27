@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
+using RaggedBooks.Core.Configuration;
 
 namespace RaggedBooks.Tests;
 

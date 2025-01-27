@@ -60,11 +60,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Appsettings.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="Appsettings.json">
+	  <Content Include="..\Config\Appsettings.json" Link="Appsettings.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

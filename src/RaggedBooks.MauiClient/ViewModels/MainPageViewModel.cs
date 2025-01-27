@@ -6,6 +6,7 @@ using Markdig;
 using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
 using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.Configuration;
 using RaggedBooks.Core.SemanticSearch;
 
 namespace RaggedBooks.MauiClient.ViewModels
@@ -149,7 +150,7 @@ namespace RaggedBooks.MauiClient.ViewModels
                     contexts.Add(text.Trim());
                 }
                 var usedModel = _raggedConfig.UseLocalChatModel
-                    ? _raggedConfig.ChatCompletionModel + " (local)"
+                    ? _raggedConfig.ChatCompletionModel + $" ({_raggedConfig.OllamaUrl.Host})"
                     : "gpt-4o";
 
                 StatusText = $"Asking {usedModel}...";

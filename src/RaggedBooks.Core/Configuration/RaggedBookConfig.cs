@@ -1,4 +1,4 @@
-﻿namespace RaggedBooks.Core;
+﻿namespace RaggedBooks.Core.Configuration;
 
 public class RaggedBookConfig
 {

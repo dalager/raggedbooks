@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using RaggedBooks.Core;
 using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.Configuration;
 using RaggedBooks.Core.SemanticSearch;
 using RaggedBooks.Core.TextExtraction;
 
@@ -54,7 +54,7 @@ public class RaggedBooksCli(
 
         if (args.Contains("-rag"))
         {
-            var contexts = searchResults.Select(x => x.Record.Content).ToArray();
+            var textChunks = searchResults.Select(x => x.Record.Content).ToArray();
             var books = searchResults.Select(x => x.Record.Book).Distinct().ToArray();
             logger.LogInformation(
                 "Asking {Model} with {Resultcount} contexts. from these {BookCount} books:",
@@ -67,7 +67,7 @@ public class RaggedBooksCli(
                 logger.LogInformation(" - {Book}", book);
             }
 
-            var response = await chatService.AskRaggedQuestion(query, contexts.ToArray());
+            var response = await chatService.AskRaggedQuestion(query, textChunks.ToArray());
 
             logger.LogInformation("--------- Answer -------------");
             logger.LogInformation(response);

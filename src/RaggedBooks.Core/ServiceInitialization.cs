@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using RaggedBooks.Core.Chat;
+using RaggedBooks.Core.Configuration;
 using RaggedBooks.Core.SemanticSearch;
 using RaggedBooks.Core.TextExtraction;
 using Serilog;

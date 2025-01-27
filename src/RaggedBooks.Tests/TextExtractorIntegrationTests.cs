@@ -1,4 +1,5 @@
 ﻿using RaggedBooks.Core;
+using RaggedBooks.Core.Configuration;
 using RaggedBooks.Core.SemanticSearch;
 using RaggedBooks.Core.TextExtraction;
 

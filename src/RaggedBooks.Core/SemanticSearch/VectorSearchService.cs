@@ -5,6 +5,8 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.Qdrant;
 using Microsoft.SemanticKernel.Embeddings;
 using Qdrant.Client;
+using RaggedBooks.Core.Configuration;
+
 #pragma warning disable S125
 
 #pragma warning disable SKEXP0001

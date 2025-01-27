@@ -1,4 +1,5 @@
 ﻿using Qdrant.Client;
+using RaggedBooks.Core.Configuration;
 
 namespace RaggedBooks.Core.SemanticSearch;
 
