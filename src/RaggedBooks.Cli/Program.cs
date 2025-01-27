@@ -1,8 +1,4 @@
-﻿#pragma warning disable SKEXP0010
-#pragma warning disable SKEXP0001
-#pragma warning disable SKEXP0050
-#pragma warning disable SKEXP0070
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RaggedBooks.Core;
