@@ -19,6 +19,7 @@ namespace RaggedBooks.MauiClient.ViewModels
         string StatusText { get; set; }
         bool IsLoading { get; set; }
         HtmlWebViewSource HtmlSearchResults { get; set; }
+        public ICommand OpenQdrantDashboard { get; }
         Task LoadModelsAsync();
     }
 
@@ -31,6 +32,7 @@ namespace RaggedBooks.MauiClient.ViewModels
         private readonly ILogger<MainPageViewModel> _logger;
         private ICommand _searchCommand = null!;
         private ICommand _lookupCommand = null!;
+        private ICommand _openQdrantDashboard = null!;
         private string _query = string.Empty;
         private const string defaultHtml =
             "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
@@ -43,6 +45,12 @@ namespace RaggedBooks.MauiClient.ViewModels
             _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
         public ICommand LookupCommand =>
             _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
+
+        public ICommand OpenQdrantDashboard =>
+            _openQdrantDashboard ??= new RelayCommand(() =>
+            {
+                Process.Start(_raggedConfig.ChromeExePath, _raggedConfig.QdrantUrl + "dashboard");
+            });
 
         public MainPageViewModel(
             VectorSearchService vectorSearchService,

@@ -18,6 +18,9 @@
                 </MenuFlyoutItem.KeyboardAccelerators>
             </MenuFlyoutItem>
         </MenuBarItem>
+        <MenuBarItem Text="Services">
+            <MenuFlyoutItem Text="Open QDrant Dashboard" Command="{Binding OpenQdrantDashboard}"></MenuFlyoutItem>
+        </MenuBarItem>
     </ContentPage.MenuBarItems>
 
     <ScrollView Margin="10,10,10,10">
