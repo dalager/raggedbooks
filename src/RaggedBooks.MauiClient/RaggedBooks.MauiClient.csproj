@@ -21,10 +21,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>RaggedBooks.MauiClient</ApplicationTitle>
+		<ApplicationTitle>Ragged Books</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.raggedbooks.mauiclient</ApplicationId>
+		<ApplicationId>com.dalager.raggedbooks.mauiclient</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
