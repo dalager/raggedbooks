@@ -20,6 +20,7 @@ namespace RaggedBooks.MauiClient.ViewModels
         bool IsLoading { get; set; }
         HtmlWebViewSource HtmlSearchResults { get; set; }
         public ICommand OpenQdrantDashboard { get; }
+        public string OllamaStatus { get; }
         Task LoadModelsAsync();
     }
 
@@ -30,9 +31,6 @@ namespace RaggedBooks.MauiClient.ViewModels
         private readonly RaggedBookConfig _raggedConfig;
         private readonly OllamaModelManager _ollamaManager;
         private readonly ILogger<MainPageViewModel> _logger;
-        private ICommand _searchCommand = null!;
-        private ICommand _lookupCommand = null!;
-        private ICommand _openQdrantDashboard = null!;
         private string _query = string.Empty;
         private const string defaultHtml =
             "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
@@ -41,16 +39,12 @@ namespace RaggedBooks.MauiClient.ViewModels
         private string _statusText = defaultStatusText;
         private const string defaultStatusText = "";
 
-        public ICommand SearchCommand =>
-            _searchCommand ??= new AsyncRelayCommand(ExecuteSearchAsync);
-        public ICommand LookupCommand =>
-            _lookupCommand ??= new AsyncRelayCommand(ExecuteLookupAsync);
+        public ICommand SearchCommand { get; }
 
-        public ICommand OpenQdrantDashboard =>
-            _openQdrantDashboard ??= new RelayCommand(() =>
-            {
-                Process.Start(_raggedConfig.ChromeExePath, _raggedConfig.QdrantUrl + "dashboard");
-            });
+        public ICommand LookupCommand { get; }
+
+        public ICommand OpenQdrantDashboard { get; }
+
 
         public MainPageViewModel(
             VectorSearchService vectorSearchService,
@@ -67,6 +61,9 @@ namespace RaggedBooks.MauiClient.ViewModels
             _logger = logger;
             _webViewSource = new HtmlWebViewSource() { Html = WrapInHtml(defaultHtml) };
             _markdownConverter = new MarkdownToHtmlConverter();
+            SearchCommand = new AsyncRelayCommand(ExecuteSearchAsync);
+            LookupCommand = new AsyncRelayCommand(ExecuteLookupAsync);
+            OpenQdrantDashboard = new RelayCommand(() => { Process.Start(_raggedConfig.ChromeExePath, _raggedConfig.QdrantUrl + "dashboard"); });
         }
 
         public string StatusText
@@ -78,6 +75,20 @@ namespace RaggedBooks.MauiClient.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        private string _ollamaStatus = string.Empty;
+
+        public string OllamaStatus
+        {
+            get => _ollamaStatus;
+            private set
+            {
+                _ollamaStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private bool _isLoading;
         private readonly MarkdownToHtmlConverter _markdownConverter;
 
@@ -89,7 +100,7 @@ namespace RaggedBooks.MauiClient.ViewModels
                 if (_isLoading != value)
                 {
                     _isLoading = value;
-                    OnPropertyChanged(nameof(IsLoading));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -196,12 +207,12 @@ namespace RaggedBooks.MauiClient.ViewModels
             }
         }
 
-        public void DisplayHtmlInWebview(string html)
+        private void DisplayHtmlInWebview(string html)
         {
             HtmlSearchResults = new HtmlWebViewSource { Html = html };
         }
 
-        public static string WrapInHtml(string inputString)
+        private static string WrapInHtml(string inputString)
         {
             var htmlWrapper =
                 "<!DOCTYPE html>"
@@ -220,20 +231,23 @@ namespace RaggedBooks.MauiClient.ViewModels
         public async Task LoadModelsAsync()
         {
             IsLoading = true;
-
+            var ollamaState = " 🟢";
             StatusText = "Pulling required models...";
             try
             {
                 await _ollamaManager.PullRequiredModels(
-                    (pullingModelName) =>
-                    {
-                        StatusText = "Loading " + pullingModelName;
-                    }
+                    (pullingModelName) => { StatusText = "Loading " + pullingModelName; }
                 );
+                StatusText = "Ready 😊";
+            }
+            catch (Exception)
+            {
+                StatusText = "Could not access ollama " + "😵‍💫";
+                ollamaState = " 🔴";
             }
             finally
             {
-                StatusText = "Ready 😊";
+                OllamaStatus = _raggedConfig.ChatCompletionModel + "/" + _raggedConfig.OllamaUrl.Host + ollamaState;
                 IsLoading = false;
             }
         }

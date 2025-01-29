@@ -53,8 +53,9 @@
             <WebView Source="{Binding HtmlSearchResults}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                      Margin="5,5,5,5" />
 
-            <Label Text="{Binding StatusText}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
-                   HorizontalTextAlignment="Start" />
+            <Label Text="{Binding StatusText}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                   HorizontalTextAlignment="Start" />  
+            <Label Text="{Binding OllamaStatus}" Grid.Row="4" Grid.Column="2" HorizontalTextAlignment="End"/>
         </Grid>
     </ScrollView>
 </ContentPage>
