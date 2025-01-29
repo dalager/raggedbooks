@@ -9,8 +9,8 @@ namespace RaggedBooks.Cli;
 
 public class RaggedBooksCli(
     FileImportService fileImportService,
-    VectorSearchService vectorSearchService,
-    ChatService chatService,
+    IVectorSearchService vectorSearchService,
+    IChatService chatService,
     RaggedBookConfig raggedBookConfig,
     ILogger<RaggedBooksCli> logger
 )

@@ -8,7 +8,12 @@ namespace RaggedBooks.Core.Chat;
 
 #pragma warning disable SKEXP0001
 
-public class ChatService(Kernel kernel)
+public interface IChatService
+{
+    Task<string> AskRaggedQuestion(string question, string[] contexts);
+}
+
+public class ChatService(Kernel kernel) : IChatService
 {
     public async Task<string> AskRaggedQuestion(string question, string[] contexts)
     {

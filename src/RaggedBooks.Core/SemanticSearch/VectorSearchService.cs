@@ -13,7 +13,21 @@ using RaggedBooks.Core.Configuration;
 
 namespace RaggedBooks.Core.SemanticSearch;
 
-public class VectorSearchService
+public interface IVectorSearchService
+{
+    Task<VectorSearchResults<ContentChunk>> SearchVectorStore(string query);
+
+    /// <summary>
+    /// Delete the collection from the vectorstore
+    /// </summary>
+    /// <returns></returns>
+    Task ClearCollection();
+
+    Task UpsertItems(ContentChunk[] items);
+    Task<IVectorStoreRecordCollection<ulong, ContentChunk>> GetCollection();
+}
+
+public class VectorSearchService : IVectorSearchService
 {
     private readonly RaggedBookConfig _raggedBookConfig;
     private readonly ILogger<VectorSearchService> _logger;

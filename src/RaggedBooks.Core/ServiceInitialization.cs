@@ -35,11 +35,12 @@ namespace RaggedBooks.Core
             services.AddSingleton(raggedBookConfig);
 
             services.AddSingleton<OllamaModelManager>();
-            services.AddSingleton<ChatService>();
-
+            services.AddSingleton<IChatService,ChatService>();
+            services.AddSingleton<IRagService, RagService>();
+            
             // vector store and api
             services.AddQdrantVectorStore();
-            services.AddSingleton<VectorSearchService>();
+            services.AddSingleton<IVectorSearchService,VectorSearchService>();
             services.AddSingleton<QDrantApiClient>();
 
             services.AddSingleton<FileImportService>();

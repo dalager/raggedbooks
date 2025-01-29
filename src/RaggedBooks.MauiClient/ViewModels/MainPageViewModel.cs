@@ -11,26 +11,14 @@ using RaggedBooks.Core.SemanticSearch;
 
 namespace RaggedBooks.MauiClient.ViewModels
 {
-    public interface IMainPageViewModel
-    {
-        ICommand SearchCommand { get; }
-        ICommand LookupCommand { get; }
-        string Query { get; set; }
-        string StatusText { get; set; }
-        bool IsLoading { get; set; }
-        HtmlWebViewSource HtmlSearchResults { get; set; }
-        public ICommand OpenQdrantDashboard { get; }
-        public string OllamaStatus { get; }
-        Task LoadModelsAsync();
-    }
-
     public class MainPageViewModel : ObservableObject, IMainPageViewModel
     {
-        private readonly VectorSearchService _vectorSearchService;
-        private readonly ChatService _chatService;
+        private readonly IVectorSearchService _vectorSearchService;
+        private readonly IChatService _chatService;
         private readonly RaggedBookConfig _raggedConfig;
         private readonly OllamaModelManager _ollamaManager;
         private readonly ILogger<MainPageViewModel> _logger;
+        private readonly IRagService _ragService;
         private string _query = string.Empty;
         private const string defaultHtml =
             "<h1>Ragged Books</h1><p>Search your book collection with a little help from your AI friends</p><ul><li>Click on 'Go' to jump directly to the first matching page.</li>"
@@ -47,11 +35,12 @@ namespace RaggedBooks.MauiClient.ViewModels
 
 
         public MainPageViewModel(
-            VectorSearchService vectorSearchService,
-            ChatService chatService,
+            IVectorSearchService vectorSearchService,
+            IChatService chatService,
             RaggedBookConfig raggedConfig,
             OllamaModelManager ollamaManager,
-            ILogger<MainPageViewModel> logger
+            ILogger<MainPageViewModel> logger,
+            IRagService ragService
         )
         {
             _vectorSearchService = vectorSearchService;
@@ -59,6 +48,7 @@ namespace RaggedBooks.MauiClient.ViewModels
             _raggedConfig = raggedConfig;
             _ollamaManager = ollamaManager;
             _logger = logger;
+            _ragService = ragService;
             _webViewSource = new HtmlWebViewSource() { Html = WrapInHtml(defaultHtml) };
             _markdownConverter = new MarkdownToHtmlConverter();
             SearchCommand = new AsyncRelayCommand(ExecuteSearchAsync);
@@ -158,32 +148,10 @@ namespace RaggedBooks.MauiClient.ViewModels
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                StatusText = "Semantic search...";
+                StatusText = "Searching...";
+                var markdownString = await _ragService.Search(Query);
 
-                var searchResult = await _vectorSearchService.SearchVectorStore(Query);
-                var searchResults = searchResult
-                    .Results.ToBlockingEnumerable()
-                    .Select(x => x)
-                    .ToList();
-
-                var matchingRecords = searchResults.Select(x => x.Record).ToArray();
-                var contexts = new List<string>();
-                foreach (var record in matchingRecords)
-                {
-                    var text =
-                        $"{record.Content}{Environment.NewLine}(source: {record.Book} - {record.Chapter})";
-
-                    contexts.Add(text.Trim());
-                }
-                var usedModel = _raggedConfig.UseLocalChatModel
-                    ? _raggedConfig.ChatCompletionModel + $" ({_raggedConfig.OllamaUrl.Host})"
-                    : "gpt-4o";
-
-                StatusText = $"Asking {usedModel}...";
-
-                var response = await _chatService.AskRaggedQuestion(Query, [.. contexts]);
-
-                var htmlBody = _markdownConverter.ConvertToHtml(response);
+                var htmlBody = _markdownConverter.ConvertToHtml(markdownString);
 
                 DisplayHtmlInWebview(WrapInHtml(htmlBody));
             }

@@ -15,13 +15,13 @@ namespace RaggedBooks.Core.TextExtraction;
 public class FileImportService
 {
     private readonly ITextEmbeddingGenerationService _textEmbeddingGenerationService;
-    private readonly VectorSearchService _vectorSearchService;
+    private readonly IVectorSearchService _vectorSearchService;
     private readonly ILogger<FileImportService> _logger;
     private readonly RaggedBookConfig _config;
 
     public FileImportService(
         Kernel kernel,
-        VectorSearchService vectorSearchService,
+        IVectorSearchService vectorSearchService,
         ILogger<FileImportService> logger,
         IOptions<RaggedBookConfig> config
     )
