@@ -6,16 +6,6 @@ namespace RaggedBooks.Core.TextExtraction;
 
 public static class TextExtractor
 {
-    public record Page(string TextContent, int pagenumber);
-
-    public record Book(
-        string Title,
-        List<Page> Pages,
-        BookmarkTree BookmarkTree,
-        string Authors,
-        string Filename
-    );
-
     public static async Task<Book> LoadBook(string fileName)
     {
         if (!File.Exists(fileName))
@@ -54,8 +44,6 @@ public static class TextExtractor
 
         return Task.FromResult(pages);
     }
-
-    public record Chapter(string Title, int Level, int Pagenumber);
 
     public static Task<List<Chapter>> GetChapters(Stream stream)
     {

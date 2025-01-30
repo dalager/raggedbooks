@@ -6,10 +6,10 @@ namespace RaggedBooks.Core.TextExtraction;
 /// </summary>
 public class BookmarkTree
 {
-    private readonly List<TextExtractor.Chapter> _chapters;
+    private readonly List<Chapter> _chapters;
     private readonly Dictionary<int, string> _chapterPathCache = new();
 
-    public BookmarkTree(List<TextExtractor.Chapter> chapters)
+    public BookmarkTree(List<Chapter> chapters)
     {
         _chapters = chapters;
     }

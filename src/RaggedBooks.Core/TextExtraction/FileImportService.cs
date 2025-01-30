@@ -117,8 +117,8 @@ public class FileImportService
                 {
                     Id = Guid.NewGuid(),
                     Book = book.Title,
-                    Chapter = book.BookmarkTree.GetChapterPath(page.pagenumber),
-                    PageNumber = page.pagenumber,
+                    Chapter = book.BookmarkTree.GetChapterPath(page.Pagenumber),
+                    PageNumber = page.Pagenumber,
                     Content = paragraph,
                     ContentEmbedding = embedding,
                     Index = bookIndex,
