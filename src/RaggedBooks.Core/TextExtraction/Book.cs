@@ -3,7 +3,7 @@
 public record Book(
     string Title,
     List<Page> Pages,
-    BookmarkTree BookmarkTree,
+    ChapterPath ChapterPath,
     string Authors,
     string Filename
 );
