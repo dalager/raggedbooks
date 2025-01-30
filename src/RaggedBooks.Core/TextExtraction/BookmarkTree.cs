@@ -4,17 +4,26 @@ namespace RaggedBooks.Core.TextExtraction;
 /// Represents a tree of bookmarks for a PDF document.
 /// Used to enrich the chunks with metadata
 /// </summary>
-public class BookmarkTree
+public sealed class ChapterPath
 {
     private readonly List<Chapter> _chapters;
     private readonly Dictionary<int, string> _chapterPathCache = new();
 
-    public BookmarkTree(List<Chapter> chapters)
+    public ChapterPath(IEnumerable<Chapter> chapters)
     {
-        _chapters = chapters;
+        _chapters = chapters.ToList();
     }
 
-    public string GetChapterPath(int pageNumber, int maxLevel = int.MaxValue)
+    /// <summary>
+    /// Will output full path for a chapter, which could mean that a chapter with child chapters
+    /// will result in something like: "chapter 1 > child 0 > child 1".
+    /// 
+    /// Will take the nearest chapter to a page number. If a page number is 10 and that page is between chapter 1 and child 1, then
+    /// only "chapter 1" is returned. 
+    /// </summary>
+    /// <param name="pageNumber">A page number that should range between the books first and last page</param>
+    /// <returns>"chapter 1 > child 0 > child 1"</returns>
+    public string ByPageNumber(int pageNumber)
     {
         if (_chapterPathCache.TryGetValue(pageNumber, out var cachedPath))
         {
@@ -22,57 +31,25 @@ public class BookmarkTree
         }
 
         var path = new List<string>();
-        var currentLevel = 0;
 
-        void AddTitle(string title, int? index = 0)
-        {
-            // remove linebreaks
-            title ??= string.Empty;
-            title = title.ReplaceLineEndings(" ");
-            title = title.Replace("  ", " ");
-            if (index.HasValue && path.Count > 0)
-            {
-                path[index.Value] = title;
-            }
-            else
-            {
-                path.Add(title);
-            }
-        }
+        Chapter? lastValidChapter = null;
 
-        foreach (var chapter in _chapters)
+        foreach (var chapter in _chapters.OrderBy(c => c.Pagenumber))
         {
+            // no reason to go beyond chapters with higher page numbers than we are looking for
             if (chapter.Pagenumber > pageNumber)
                 break;
 
-            if (chapter.Level > maxLevel)
-                continue;
-
-            if (chapter.Level > currentLevel)
+            if (lastValidChapter == null || chapter.Level > lastValidChapter.Level)
             {
-                AddTitle(chapter.Title);
-                currentLevel = chapter.Level;
+                path.Add(chapter.Title);
+                lastValidChapter = chapter;
             }
-            else if (chapter.Level == currentLevel)
+            else if (chapter.Level == lastValidChapter.Level)
             {
-                if (path.Count > 0)
-                {
-                    AddTitle(chapter.Title, path.Count - 1);
-                }
-                else
-                {
-                    AddTitle(chapter.Title);
-                }
-            }
-            else
-            {
-                while (currentLevel >= chapter.Level && path.Count > 0)
-                {
-                    path.RemoveAt(path.Count - 1);
-                    currentLevel--;
-                }
-                AddTitle(chapter.Title);
-                currentLevel = chapter.Level;
+                // replace the previous chapter at the same level
+                path[^1] = chapter.Title;
+                lastValidChapter = chapter;
             }
         }
 

@@ -4,36 +4,32 @@ using UglyToad.PdfPig.Outline;
 
 namespace RaggedBooks.Core.TextExtraction;
 
-public static class TextExtractor
+public interface IConvertToBook
 {
-    public static async Task<Book> LoadBook(string fileName)
+    Task<Book> Convert(string fileName);
+}
+
+public class PdfToBookConverter : IConvertToBook
+{
+    public async Task<Book> Convert(string fileName)
     {
-        if (!File.Exists(fileName))
-        {
-            throw new FileNotFoundException("File not found", fileName);
-        }
+        using var pdfDocument = PdfDocument.Open(fileName);
 
-        await using var stream = File.OpenRead(fileName);
+        var pages = await GetContentAsync(pdfDocument);
 
-        var pages = await GetContentAsync(stream);
-        _ = stream.Seek(0, SeekOrigin.Begin);
-        var chapters = await GetChapters(stream);
+        var chapters = await GetChapters(pdfDocument);
 
-        var bookmarkTree = new BookmarkTree(chapters);
-        _ = stream.Seek(0, SeekOrigin.Begin);
-        using var pdfDocument = PdfDocument.Open(stream);
+        var chapterPath = new ChapterPath(chapters);
+
         var title = pdfDocument.Information.Title ?? string.Empty;
         var authors = pdfDocument.Information.Author ?? string.Empty;
 
-        return new Book(title, pages, bookmarkTree, authors, Path.GetFileName(fileName));
+        return new Book(title, pages, chapterPath, authors, Path.GetFileName(fileName));
     }
 
-    public static Task<List<Page>> GetContentAsync(Stream stream)
+    private Task<List<Page>> GetContentAsync(PdfDocument pdfDocument)
     {
         var pages = new List<Page>();
-
-        // Read the content of the PDF document.
-        using var pdfDocument = PdfDocument.Open(stream);
 
         // get the title of the book
         foreach (var page in pdfDocument.GetPages().Where(x => x is not null))
@@ -45,11 +41,10 @@ public static class TextExtractor
         return Task.FromResult(pages);
     }
 
-    public static Task<List<Chapter>> GetChapters(Stream stream)
+    private Task<List<Chapter>> GetChapters(PdfDocument pdfDocument)
     {
         var result = new List<Chapter>();
-        // Read the content of the PDF document.
-        using var pdfDocument = PdfDocument.Open(stream);
+
         if (pdfDocument.TryGetBookmarks(out var bookmarks))
         {
             var bookmarkNodes = bookmarks.GetNodes();
