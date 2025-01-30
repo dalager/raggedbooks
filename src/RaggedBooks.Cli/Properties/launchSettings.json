@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "RaggedBooks.Cli": {
-      "commandName": "Project",
-      "commandLineArgs": "import-folder ..\\\\..\\\\..\\\\..\\\\..\\\\data\\\r\n"
-    }
-  }
-}

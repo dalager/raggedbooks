@@ -23,7 +23,7 @@ public class FileImportService
     public FileImportService(
         IConvertToBook convertToBook,
         Kernel kernel,
-        VectorSearchService vectorSearchService,
+        IVectorSearchService vectorSearchService,
         ILogger<FileImportService> logger,
         IOptions<RaggedBookConfig> config
     )
