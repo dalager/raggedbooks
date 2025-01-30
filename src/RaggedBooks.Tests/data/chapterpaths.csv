@@ -1,0 +1,309 @@
+﻿Title,Level,Pagenumber
+Cover,0,1
+Further Praise for Code Complete,0,4
+Contents at a Glance,0,7
+Table of Contents,0,9
+Preface,0,18
+Who Should Read This Book?,1,18
+Where Else Can You Find This Information?,1,19
+Key Benefits of This Handbook,1,20
+Why This Handbook Was Written,1,22
+Author Note,1,24
+Acknowledgments,0,26
+Checklists,0,28
+Tables,0,30
+Figures,0,32
+Part I: Laying the Foundation,0,37
+Chapter 1: Welcome to Software Construction,1,39
+1.1 What Is Software Construction?,2,39
+1.2 Why Is Software Construction Important?,2,42
+Key Points,2,44
+1.3 How to Read This Book,2,44
+Chapter 2: Metaphors for a Richer Understanding of Software Development,1,45
+2.1 The Importance of Metaphors,2,45
+2.2 How to Use Software Metaphors,2,47
+2.3 Common Software Metaphors,2,49
+Additional Resources,2,56
+Key Points,2,57
+"Chapter 3: Measure Twice, Cut Once: Upstream Prerequisites",1,59
+3.1 Importance of Prerequisites,2,60
+3.2 Determine the Kind of Software You’re Working On,2,67
+3.3 Problem-Definition Prerequisite,2,72
+3.4 Requirements Prerequisite,2,74
+3.5 Architecture Prerequisite,2,79
+3.6 Amount of Time to Spend on Upstream Prerequisites,2,91
+Additional Resources,2,92
+Key Points,2,95
+Chapter 4: Key Construction Decisions,1,97
+4.1 Choice of Programming Language,2,97
+4.3 Your Location on the Technology Wave,2,102
+4.2 Programming Conventions,2,102
+4.4 Selection of Major Construction Practices,2,105
+Key Points,2,106
+Part II: Creating High-Quality Code,0,107
+Chapter 5: Design in Construction,1,109
+5.1 Design Challenges,2,110
+5.2 Key Design Concepts,2,113
+5.3 Design Building Blocks: Heuristics,2,123
+5.4 Design Practices,2,146
+5.5 Comments on Popular Methodologies,2,154
+Additional Resources,2,155
+Key Points,2,159
+Chapter 6: Working Classes,1,161
+6.1 Class Foundations: Abstract Data Types (ADTs),2,162
+6.2 Good Class Interfaces,2,169
+6.3 Design and Implementation Issues,2,179
+6.4 Reasons to Create a Class,2,188
+6.5 Language-Specific Issues,2,192
+6.6 Beyond Classes: Packages,2,192
+Additional Resources,2,195
+Key Points,2,196
+Chapter 7: High-Quality Routines,1,197
+7.1 Valid Reasons to Create a Routine,2,200
+7.2 Design at the Routine Level,2,204
+7.3 Good Routine Names,2,207
+7.4 How Long Can a Routine Be?,2,209
+7.5 How to Use Routine Parameters,2,210
+7.6 Special Considerations in the Use of Functions,2,217
+7.7 Macro Routines and Inline Routines,2,218
+Key Points,2,222
+Chapter 8: Defensive Programming,1,223
+8.1 Protecting Your Program from Invalid Inputs,2,224
+8.2 Assertions,2,225
+8.3 Error-Handling Techniques,2,230
+8.4 Exceptions,2,234
+8.5 Barricade Your Program to Contain the Damage Caused by Errors,2,239
+8.6 Debugging Aids,2,241
+8.7 Determining How Much Defensive Programming to Leave in Production Code,2,245
+8.8 Being Defensive About Defensive Programming,2,246
+Additional Resources,2,248
+Key Points,2,249
+Chapter 9: The Pseudocode Programming Process,1,251
+9.1 Summary of Steps in Building Classes and Routines,2,252
+9.2 Pseudocode for Pros,2,254
+9.3 Constructing Routines by Using the PPP,2,256
+9.4 Alternatives to the PPP,2,268
+Key Points,2,270
+Part III: Variables,0,271
+Chapter 10: General Issues in Using Variables,1,273
+10.1 Data Literacy,2,274
+10.2 Making Variable Declarations Easy,2,275
+10.3 Guidelines for Initializing Variables,2,276
+10.4 Scope,2,280
+10.5 Persistence,2,287
+10.6 Binding Time,2,288
+10.7 Relationship Between Data Types and Control Structures,2,290
+10.8 Using Each Variable for Exactly One Purpose,2,291
+Key Points,2,294
+Chapter 11: The Power of Variable Names,1,295
+11.1 Considerations in Choosing Good Names,2,295
+11.2 Naming Specific Types of Data,2,300
+11.3 The Power of Naming Conventions,2,306
+11.4 Informal Naming Conventions,2,308
+11.5 Standardized Prefixes,2,315
+11.6 Creating Short Names That Are Readable,2,318
+11.7 Kinds of Names to Avoid,2,321
+Key Points,2,325
+Chapter 12: Fundamental Data Types,1,327
+12.1 Numbers in General,2,328
+12.2 Integers,2,329
+12.3 Floating-Point Numbers,2,331
+12.4 Characters and Strings,2,333
+12.5 Boolean Variables,2,337
+12.6 Enumerated Types,2,339
+12.7 Named Constants,2,343
+12.8 Arrays,2,346
+12.9 Creating Your Own Types (Type Aliasing),2,347
+Key Points,2,354
+Chapter 13: Unusual Data Types,1,355
+13.1 Structures,2,355
+13.2 Pointers,2,359
+13.3 Global Data,2,371
+Additional Resources,2,379
+Key Points,2,380
+Part IV: Statements,0,381
+14.1 Statements That Must Be in a Specific Order,2,383
+Chapter 14: Organizing Straight-Line Code,1,383
+14.2 Statements Whose Order Doesn’t Matter,2,387
+Key Points,2,389
+Chapter 15: Using Conditionals,1,391
+15.1 if Statements,2,391
+15.2 case Statements,2,397
+Key Points,2,402
+Chapter 16: Controlling Loops,1,403
+16.1 Selecting the Kind of Loop,2,403
+16.2 Controlling the Loop,2,409
+16.3 Creating Loops Easily—From the Inside Out,2,421
+16.4 Correspondence Between Loops and Arrays,2,423
+Key Points,2,425
+Chapter 17: Unusual Control Structures,1,427
+17.1 Multiple Returns from a Routine,2,427
+17.2 Recursion,2,429
+17.3 goto,2,434
+17.4 Perspective on Unusual Control Structures,2,444
+Additional Resources,2,444
+Key Points,2,446
+Chapter 18: Table-Driven Methods,1,447
+18.1 General Considerations in Using Table-Driven Methods,2,447
+18.2 Direct Access Tables,2,449
+18.3 Indexed Access Tables,2,461
+18.4 Stair-Step Access Tables,2,462
+18.5 Other Examples of Table Lookups,2,465
+Key Points,2,466
+Chapter 19: General Control Issues,1,467
+19.1 Boolean Expressions,2,467
+19.2 Compound Statements (Blocks),2,479
+19.3 Null Statements,2,480
+19.4 Taming Dangerously Deep Nesting,2,481
+19.5 A Programming Foundation: Structured Programming,2,490
+19.6 Control Structures and Complexity,2,492
+Key Points,2,496
+Part V: Code Improvements,0,497
+Chapter 20:The Software-Quality Landscape,1,499
+20.1 Characteristics of Software Quality,2,499
+20.2 Techniques for Improving Software Quality,2,502
+20.3 Relative Effectiveness of Quality Techniques,2,505
+20.4 When to Do Quality Assurance,2,509
+20.5 The General Principle of Software Quality,2,510
+Additional Resources,2,512
+Key Points,2,513
+Chapter 21: Collaborative Construction,1,515
+21.1 Overview of Collaborative Development Practices,2,516
+21.2 Pair Programming,2,519
+21.3 Formal Inspections,2,521
+21.4 Other Kinds of Collaborative Development Practices,2,528
+21.5 Comparison of Collaborative Construction Techniques,2,531
+Additional Resources,2,532
+Key Points,2,533
+Chapter 22: Developer Testing,1,535
+22.1 Role of Developer Testing in Software Quality,2,536
+22.2 Recommended Approach to Developer Testing,2,539
+22.3 Bag of Testing Tricks,2,541
+22.4 Typical Errors,2,553
+22.5 Test-Support Tools,2,559
+22.6 Improving Your Testing,2,564
+22.7 Keeping Test Records,2,565
+Additional Resources,2,566
+Key Points,2,569
+Chapter 23: Debugging,1,571
+23.1 Overview of Debugging Issues,2,571
+23.2 Finding a Defect,2,576
+23.3 Fixing a Defect,2,586
+23.4 Psychological Considerations in Debugging,2,590
+23.5 Debugging Tools—Obvious and Not-So-Obvious,2,592
+Additional Resources,2,597
+Key Points,2,598
+Chapter 24: Refactoring,1,599
+24.1 Kinds of Software Evolution,2,600
+24.2 Introduction to Refactoring,2,601
+23.3 Specific Refactorings,2,607
+23.4 Refactoring Safely,2,615
+23.5 Refactoring Strategies,2,618
+Key Points,2,621
+Additional Resources,2,621
+Chapter 25: Code-Tuning Strategies,1,623
+25.1 Performance Overview,2,624
+25.2 Introduction to Code Tuning,2,627
+25.3 Kinds of Fat and Molasses,2,633
+25.4 Measurement,2,639
+25.5 Iteration,2,641
+25.6 Summary of the Approach to Code Tuning,2,642
+Additional Resources,2,642
+Key Points,2,644
+Chapter 26: Code-Tuning Techniques,1,645
+26.1 Logic,2,646
+26.2 Loops,2,652
+26.3 Data Transformations,2,660
+26.4 Expressions,2,666
+26.5 Routines,2,675
+26.6 Recoding in a Low-Level Language,2,676
+"26.7 The More Things Change, the More They Stay the Same",2,679
+Additional Resources,2,680
+Key Points,2,681
+Part VI: System Considerations,0,683
+Chapter 27: How Program Size Affects Construction,1,685
+27.1 Communication and Size,2,686
+27.2 Range of Project Sizes,2,687
+27.3 Effect of Project Size on Errors,2,687
+27.4 Effect of Project Size on Productivity,2,689
+27.5 Effect of Project Size on Development Activities,2,690
+Additional Resources,2,694
+Key Points,2,695
+Chapter 28: Managing Construction,1,697
+28.1 Encouraging Good Coding,2,698
+28.2 Configuration Management,2,700
+28.3 Estimating a Construction Schedule,2,707
+28.4 Measurement,2,713
+28.5 Treating Programmers as People,2,716
+28.6 Managing Your Manager,2,722
+Additional Resources on Managing Construction,2,723
+Key Points,2,724
+29.1 Importance of the Integration Approach,2,725
+Chapter 29: Integration,1,725
+29.2 Integration Frequency—Phased or Incremental?,2,727
+29.3 Incremental Integration Strategies,2,730
+29.4 Daily Build and Smoke Test,2,738
+Additional Resources,2,743
+Key Points,2,744
+Chapter 30: Programming Tools,1,745
+30.1 Design Tools,2,746
+30.2 Source-Code Tools,2,746
+30.3 Executable-Code Tools,2,752
+30.4 Tool-Oriented Environments,2,756
+30.5 Building Your Own Programming Tools,2,757
+30.6 Tool Fantasyland,2,758
+Additional Resources,2,760
+Key Points,2,761
+Part VII: Software Craftsmanship,0,763
+Chapter 31: Layout and Style,1,765
+31.1 Layout Fundamentals,2,766
+31.2 Layout Techniques,2,772
+31.3 Layout Styles,2,774
+31.4 Laying Out Control Structures,2,781
+31.5 Laying Out Individual Statements,2,789
+31.6 Laying Out Comments,2,799
+31.7 Laying Out Routines,2,802
+31.8 Laying Out Classes,2,804
+Additional Resources,2,810
+Key Points,2,811
+Chapter 32: Self-Documenting Code,1,813
+32.1 External Documentation,2,813
+32.2 Programming Style as Documentation,2,814
+32.3 To Comment or Not to Comment,2,817
+32.4 Keys to Effective Comments,2,821
+32.5 Commenting Techniques,2,828
+32.6 IEEE Standards,2,849
+Additional Resources,2,851
+Key Points,2,853
+Chapter 33: Personal Character,1,855
+33.1 Isn’t Personal Character Off the Topic?,2,856
+33.2 Intelligence and Humility,2,857
+33.3 Curiosity,2,858
+33.4 Intellectual Honesty,2,862
+33.5 Communication and Cooperation,2,864
+33.6 Creativity and Discipline,2,865
+33.7 Laziness,2,866
+33.8 Characteristics That Don’t Matter As Much As You Might Think,2,866
+3.9 Habits,2,869
+Additional Resources,2,870
+Key Points,2,871
+34.1 Conquer Complexity,2,873
+Chapter 34: Themes in Software Craftsmanship,1,873
+34.2 Pick Your Process,2,875
+"34.3 Write Programs for People First, Computers Second",2,877
+"34.4 Program into Your Language, Not in It",2,879
+34.5 Focus Your Attention with the Help of Conventions,2,880
+34.6 Program in Terms of the Problem Domain,2,881
+34.7 Watch for Falling Rocks,2,884
+"34.8 Iterate, Repeatedly, Again and Again",2,886
+34.9 Thou Shalt Rend Software and Religion Asunder,2,887
+Key Points,2,889
+Chapter 35: Where to Find More Information,1,891
+35.1 Information About Software Construction,2,892
+35.2 Topics Beyond Construction,2,893
+35.3 Periodicals,2,895
+35.4 A Software Developer’s Reading Plan,2,896
+35.5 Joining a Professional Organization,2,898
+Bibliography,0,899
+Index,0,921
+About the Author,0,951
